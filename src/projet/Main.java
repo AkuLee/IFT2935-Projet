@@ -13,12 +13,12 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
         primaryStage.setTitle("IFT2035 - Projet");
         primaryStage.setScene(new Scene(root, 640, 400));
-
         primaryStage.show();
     }
 
 
     public static void main(String[] args) {
+        JDBC.getInstance().init("jdbc:postgresql://localhost:5433/dvdrental","postgres","postgres");
         launch(args);
     }
 }
