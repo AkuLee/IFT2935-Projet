@@ -21,10 +21,10 @@ equipe_foot_prof = ["FC Bayern", "Olympique Lyonnais", "France National","Real M
 "Brazil nationnal", "AS Monaco", "Liverpool F.C.", "Spain N.F.C.", "F.C. Barcelona"]
 expertise = ["Medecin", "Physio","Psychologue sportif", "Assistant coach"]
 type_arbitre = ["Principal", "Assistant"]
-rang_match = ["Ronde de Group", "Ronde de 16", "Quart de final", "Semi-final", "Play-off 3e place", "Final"]
+rang_match = ["Ronde de Groupe", "Ronde de 16", "Quart de final", "Semi-final", "Match de 3e place", "Final"]
 couleur_sanction = ["Rouge", "Jaune"]
 
-nom_stade = ["Rocket Center", "Bob Center", "Super Field", "Fern field", "Grandios Stadium", "Free Coutry"]
+nom_stade = ["Rocket Center", "Bob Center", "Super Field", "Fern field", "Grandios Stadium", "Cookie Center"]
 ville_stade = ["Hillford", "Harmsby", "Croma", "Bobski", "Hadderfoo", "Sier"]
 date_coupe_debut = ["1998-06-10", "2002-05-31", "2006-06-09", "2010-06-11", "2014-06-12", "2018-06-14"]
 date_coupe_fin = ["1998-07-12", "2002-06-30", "2006-07-9", "2010-07-11", "2014-07-13", "2018-07-15"]
