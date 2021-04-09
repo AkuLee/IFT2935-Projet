@@ -153,8 +153,8 @@ for coupe in range(6):
         pop_coupe.write("\n -- Match -- \n\n")
         # match
         date = date_coupe_debut[coupe]
-        nation_1 = pays[j]
-        nation_2 = pays[j + 10]
+        nation_1 = pays[j + coupe]
+        nation_2 = pays[j + 10 + coupe * 2]
         rang = rang_match[random.randint(0, len(rang_match)-1)]
         score_1 = random.randint(0, 5)
         score_2 = random.randint(0, 5)
