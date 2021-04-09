@@ -728,7 +728,7 @@ INSERT INTO joueur_equipe VALUES ('156', 'Tchecoslovaquie', '2', 'gardien de but
 
  -- EQUIPE  + Association-- 
 
-INSERT INTO equipe_foot VALUES ('Pologne', '2', '167', '1');
+INSERT INTO equipe_foot VALUES ('Pologne', '2', '167', '13');
 INSERT INTO collaborateur_equipe VALUES ('168', 'Pologne', '2');
 INSERT INTO collaborateur_equipe VALUES ('169', 'Pologne', '2');
 INSERT INTO joueur_equipe VALUES ('161', 'Pologne', '2', 'avant-centre', '1', 'Chelsea F.C.');
@@ -776,7 +776,7 @@ INSERT INTO joueur_equipe VALUES ('196', 'Croatie', '2', 'gardien de but', '36',
 
  -- EQUIPE  + Association-- 
 
-INSERT INTO equipe_foot VALUES ('Pays-Bas', '2', '207', '13');
+INSERT INTO equipe_foot VALUES ('Pays-Bas', '2', '207', '1');
 INSERT INTO collaborateur_equipe VALUES ('208', 'Pays-Bas', '2');
 INSERT INTO collaborateur_equipe VALUES ('209', 'Pays-Bas', '2');
 INSERT INTO joueur_equipe VALUES ('201', 'Pays-Bas', '2', 'avant-centre', '1', 'AS Monaco');
@@ -921,7 +921,7 @@ INSERT INTO arbitre_match VALUES ('250', 'France', 'Yougoslavie', 'Assistant', '
 
  -- Sanction du match -- 
 
-INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('25', '70', 'France', 'Yougoslavie', '2002-05-31', 'Jaune');
+INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('25', '130', 'France', 'Yougoslavie', '2002-05-31', 'Jaune');
 
  -- Match -- 
 
@@ -936,7 +936,7 @@ INSERT INTO arbitre_match VALUES ('210', 'Canada', 'Union sovietique', 'Assistan
 
  -- Sanction du match -- 
 
-INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('31', '90', 'Canada', 'Union sovietique', '2002-05-31', 'Rouge');
+INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('31', '210', 'Canada', 'Union sovietique', '2002-05-31', 'Rouge');
 
  -- Sanction du match -- 
 
@@ -959,7 +959,7 @@ INSERT INTO arbitre_match VALUES ('220', 'Bresil', 'Tchecoslovaquie', 'Assistant
 
  -- Sanction du match -- 
 
-INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('46', '70', 'Bresil', 'Tchecoslovaquie', '2002-05-31', 'Jaune');
+INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('46', '160', 'Bresil', 'Tchecoslovaquie', '2002-05-31', 'Jaune');
 
  -- Sanction du match -- 
 
@@ -993,7 +993,7 @@ INSERT INTO arbitre_match VALUES ('230', 'Suede', 'Argentine', 'Assistant', '200
 
  -- Sanction du match -- 
 
-INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('64', '60', 'Suede', 'Argentine', '2002-05-31', 'Rouge');
+INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('64', '110', 'Suede', 'Argentine', '2002-05-31', 'Rouge');
 
  -- Match -- 
 
@@ -1019,11 +1019,11 @@ INSERT INTO arbitre_match VALUES ('210', 'Angleterre', 'Croatie', 'Assistant', '
 
  -- Sanction du match -- 
 
-INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('81', '90', 'Angleterre', 'Croatie', '2002-05-31', 'Rouge');
+INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('81', '120', 'Angleterre', 'Croatie', '2002-05-31', 'Rouge');
 
  -- Sanction du match -- 
 
-INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('81', '90', 'Angleterre', 'Croatie', '2002-05-31', 'Jaune');
+INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('81', '120', 'Angleterre', 'Croatie', '2002-05-31', 'Jaune');
 
  -- Match -- 
 
@@ -1042,7 +1042,7 @@ INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, m
 
  -- Sanction du match -- 
 
-INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('95', '70', 'Mexique', 'Pays-Bas', '2002-05-31', 'Rouge');
+INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('95', '230', 'Mexique', 'Pays-Bas', '2002-05-31', 'Rouge');
 
  -- Match -- 
 

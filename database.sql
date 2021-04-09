@@ -1,10 +1,12 @@
 
 
-DROP DATABASE projet_foot;
-CREATE DATABASE projet_foot;
-\connect projet_foot
+
 
 begin;
+
+DROP SCHEMA IF EXISTS database CASCADE;
+create schema database;
+set search_path to database;
 
 CREATE TABLE Coupe_Du_Monde (
     edition int4 UNIQUE NOT NULL,
@@ -210,6 +212,3 @@ ALTER TABLE Equipe_Foot
  
 
 commit;
-
-\i personne.sql
-\i coupe.sql
