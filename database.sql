@@ -1,3 +1,9 @@
+
+
+DROP DATABASE projet_foot;
+CREATE DATABASE projet_foot;
+\connect projet_foot
+
 begin;
 
 CREATE TABLE Coupe_Du_Monde (
@@ -25,7 +31,6 @@ CREATE TABLE Sanction (
     nation_equipe_2 varchar(255) NOT NULL,
     match_date date NOT NULL,
     couleur varchar(255) NOT NULL,
-    description varchar(255) NOT NULL,
     PRIMARY KEY (sanction_id));
 
 CREATE TABLE Arbitre (
@@ -89,7 +94,7 @@ CREATE TABLE Match_Foot (
     edition_coupe int4 NOT NULL,
     stade_nom varchar(255) NOT NULL,
     stade_ville varchar(255) NOT NULL,
-    PRIMARY KEY ("date", nation1, nation2));
+    PRIMARY KEY (date, nation1, nation2));
 
 CREATE TABLE pays_coupe (
     pays varchar(255) NOT NULL,
@@ -205,3 +210,6 @@ ALTER TABLE Equipe_Foot
  
 
 commit;
+
+\i personne.sql
+\i coupe.sql
