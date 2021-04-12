@@ -104,6 +104,10 @@ ALTER TABLE Joueur
         FOREIGN KEY (personne_id)
             REFERENCES Personne (personne_id);
 
+CREATE TABLE equipes_pro_enum (
+    equipe varchar(255) NOT NULL,
+    PRIMARY KEY (equipe));
+
 CREATE TABLE Joueur_equipe (
     joueur_id int4 NOT NULL,
     nation varchar(255) NOT NULL,
@@ -112,6 +116,9 @@ CREATE TABLE Joueur_equipe (
     numero_dossard int4 NOT NULL,
     equipe_ligue_professionnelle varchar(255) NOT NULL,
     CONSTRAINT numero_positive CHECK (numero_dossard >= 0),
+    CONSTRAINT position_valide CHECK (position IN ('Avant-centre', 'Arriere latéral',
+                                                   'Millieu defensif', 'Millieu offensif',
+                                                   'Gardien de but')),
     PRIMARY KEY (joueur_id, nation, edition_coupe));
 
 ALTER TABLE Joueur_equipe
@@ -124,10 +131,17 @@ ALTER TABLE Joueur_equipe
         FOREIGN KEY (nation, edition_coupe)
             REFERENCES Equipe_Foot (nation, edition_coupe);
 
+ALTER TABLE Joueur_equipe
+    ADD CONSTRAINT fk_equipe_pro_enum
+        FOREIGN KEY (equipe_ligue_professionnelle)
+            REFERENCES equipes_pro_enum (equipe);
+
 CREATE TABLE Collaborateur (
     personne_id int4 NOT NULL,
     expertise varchar(255) NOT NULL,
     collaborateur_depuis varchar(255) NOT NULL,
+    CONSTRAINT expertise_valide CHECK (expertise IN ('Medecin', 'Physiotherapeute',
+                                                     'Psychologue sportif', 'Assistant entraineur')),
     PRIMARY KEY (personne_id));
 
 ALTER TABLE Collaborateur
@@ -166,6 +180,8 @@ CREATE TABLE Match_Foot (
     stade_ville varchar(255) NOT NULL,
     CONSTRAINT date_realiste CHECK (date >= '1930-07-13'),
     CONSTRAINT scores_positives CHECK (score_equipe_1 >= 0 AND score_equipe_2 >= 0),
+    CONSTRAINT rang_valide CHECK (rang IN ('Ronde de groupe', 'Ronde de 16',
+                                           'Quart de finale', 'Semi-finale', 'Match de 3e place', 'Finale')),
     PRIMARY KEY (date, nation1, nation2));
 
 ALTER TABLE Match_Foot

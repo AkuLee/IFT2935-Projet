@@ -16,12 +16,12 @@ pays = ["Uruguay", "Italie", "France", "Canada", "Bresil", "Suisse", "Suede", "C
     "Japon", "Russie", "Maroque", "Egypt", "Grece", "Qatar", "Etats-Unis", "Turquie"]
 
 # Position possible pour les joueurs
-position_jouer = ["avant-centre", "arriere lateraux", "millieu defensif", "avant centre", "millieu offensif", "gardien de but"]
+position_jouer = ["Avant-centre", "Arriere latéral", "Millieu defensif", "Millieu offensif", "Gardien de but"]
 equipe_foot_prof = ["FC Bayern", "Olympique Lyonnais", "France National","Real Madrid", "Manchester United F.C.", "Arsenal F.C.", "Chelsea F.C.",
 "Brazil nationnal", "AS Monaco", "Liverpool F.C.", "Spain N.F.C.", "F.C. Barcelona"]
-expertise = ["Medecin", "Physio","Psychologue sportif", "Assistant coach"]
+expertise = ["Medecin", "Physiotherapeute","Psychologue sportif", "Assistant entraineur"]
 type_arbitre = ["Principal", "Assistant"]
-rang_match = ["Ronde de Groupe", "Ronde de 16", "Quart de final", "Semi-final", "Match de 3e place", "Final"]
+rang_match = ["Ronde de groupe", "Ronde de 16", "Quart de finale", "Semi-finale", "Match de 3e place", "Finale"]
 couleur_sanction = ["Rouge", "Jaune"]
 
 nom_stade = ["Rocket Center", "Bob Center", "Super Field", "Fern field", "Grandios Stadium", "Cookie Center"]
