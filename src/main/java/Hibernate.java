@@ -51,7 +51,7 @@ public class Hibernate {
         config.setProperty("hibernate.connection.username","postgres");
         config.setProperty("hibernate.connection.password","postgres");
         config.setProperty("hibernate.dialect","org.hibernate.dialect.PostgreSQL82Dialect");
-        config.setProperty("show_sql","true");
+        //config.setProperty("show_sql","true");
         config.addAnnotatedClass(Actor.class);
 
         //final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()

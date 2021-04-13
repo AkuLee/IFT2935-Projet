@@ -1,9 +1,5 @@
 begin;
 
-DROP SCHEMA IF EXISTS database CASCADE;
-create schema database;
-set search_path to database;
-
 CREATE TABLE Coupe_Du_Monde (
     edition int4 UNIQUE NOT NULL,
     date_debut date NOT NULL,
