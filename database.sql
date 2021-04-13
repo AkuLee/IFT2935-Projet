@@ -118,7 +118,7 @@ CREATE TABLE Joueur_equipe (
     CONSTRAINT numero_positive CHECK (numero_dossard >= 0),
     CONSTRAINT position_valide CHECK (position IN ('Avant-centre', 'Arriere latéral',
                                                    'Millieu defensif', 'Millieu offensif',
-                                                   'Gardien de but')),
+                                                   'Gardien de but', 'Attaquant de pointe')),
     PRIMARY KEY (joueur_id, nation, edition_coupe));
 
 ALTER TABLE Joueur_equipe

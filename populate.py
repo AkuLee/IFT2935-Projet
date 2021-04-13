@@ -1,9 +1,8 @@
 import names, os, random
 
-# enleve le fichier pour le refaire
-os.remove("personne.sql")
-os.remove("coupe.sql")
-
+# # enleve le fichier pour le refaire
+# os.remove("personne.sql")
+# os.remove("coupe.sql")
 
 
 # sql splitter
@@ -16,9 +15,11 @@ pays = ["Uruguay", "Italie", "France", "Canada", "Bresil", "Suisse", "Suede", "C
     "Japon", "Russie", "Maroque", "Egypt", "Grece", "Qatar", "Etats-Unis", "Turquie"]
 
 # Position possible pour les joueurs
-position_jouer = ["Avant-centre", "Arriere latéral", "Millieu defensif", "Millieu offensif", "Gardien de but"]
-equipe_foot_prof = ["FC Bayern", "Olympique Lyonnais", "France National","Real Madrid", "Manchester United F.C.", "Arsenal F.C.", "Chelsea F.C.",
-"Brazil nationnal", "AS Monaco", "Liverpool F.C.", "Spain N.F.C.", "F.C. Barcelona"]
+position_jouer = ["Avant-centre", "Arriere latéral", "Millieu defensif", "Millieu offensif", "Gardien de but", "Attaquant de pointe"]
+equipe_foot_prof = ["FC Bayern", "Olympique Lyonnais", "France National","Real Madrid",
+"Manchester United F.C.", "Arsenal F.C.", "Chelsea F.C.",
+"Brazil nationnal", "AS Monaco", "Liverpool F.C.", "Spain N.F.C.",
+ "F.C. Barcelona"]
 expertise = ["Medecin", "Physiotherapeute","Psychologue sportif", "Assistant entraineur"]
 type_arbitre = ["Principal", "Assistant"]
 rang_match = ["Ronde de groupe", "Ronde de 16", "Quart de finale", "Semi-finale", "Match de 3e place", "Finale"]
@@ -51,9 +52,17 @@ personne.write("begin;\n\n")
 
 id_personne = 1;
 
+for teams in equipe_foot_prof:
+    team_enum = "INSERT INTO equipes_pro_enum VALUES ('" + teams + "');\n"
+    personne.write(team_enum)
+
 
 # ecrit le code SQL pour poluler la table personne
 for equipe in pays:
+
+    pays_enum = "INSERT INTO pays_enum VALUES ('" + equipe + "');\n"
+    personne.write(pays_enum)
+
     
     for i in range(10):
         nom = names.get_last_name()
@@ -107,13 +116,16 @@ for coupe in range(6):
     ptr_joueur = 1
 
     position = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
-
+    random.shuffle(position)
+    index = 0
     ## Section equipe
     for equipe in pays:
+
+        
         pop_coupe.write("\n -- EQUIPE  + Association-- \n\n")
-        rand = random.randint(0, len(position) - 1)
-        classement = position[rand]
-        position.pop(rand)
+        classement = position[index]
+        index +=1
+
 
         # Equipe foot
         equipe_foot = "INSERT INTO equipe_foot VALUES ('" + equipe + mid + str(edition) + mid +  str(ptr_entraineur) + mid+ str(classement) + "');\n"
@@ -171,23 +183,26 @@ for coupe in range(6):
             arbitre = random.randrange((k+1) * 50 + 10, (k+2) *  50 + 10, 10)
             if k == 0:
                 type_arbitre_match = type_arbitre[0]
-                arbitre_scope = arbitre
             else:
                 type_arbitre_match = type_arbitre[1]
             
             arbitre_match = "INSERT INTO arbitre_match VALUES ('" + str(arbitre) + mid + nation_1 + mid + nation_2 + mid + type_arbitre_match + mid + date + "');\n"
-
             pop_coupe.write(arbitre_match)
+
+            for x in range(random.randint(0, 2)):
+    
+            #sanction
+
+                pop_coupe.write("\n -- Sanction du match -- \n\n")
+                rand_joueur = random.randint(1, 6)
+                couleur = couleur_sanction[random.randint(0, 1)]
+                sanction = "INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('" + str(rand_joueur + ((j +1) * 10))+ mid + str(arbitre) + mid + nation_1 + mid + nation_2 + mid + date + mid + couleur + "');\n"
+                pop_coupe.write(sanction)
+
+
         
-        #sanction
-
-        for x in range(random.randint(0, 3)):
-
-            pop_coupe.write("\n -- Sanction du match -- \n\n")
-            rand_joueur = random.randint(1, 6)
-            couleur = couleur_sanction[random.randint(0, 1)]
-            sanction = "INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('" + str(rand_joueur + ((j +1) * 10))+ mid + str(arbitre_scope) + mid + nation_1 + mid + nation_2 + mid + date + mid + couleur + "');\n"
-            pop_coupe.write(sanction)
+        
+        
 
 
 pop_coupe.write("commit;")

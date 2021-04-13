@@ -1,903 +1,945 @@
 begin;
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bedell', 'Wilfredo', '1980-11-15', 'Uruguay', 'M');
-INSERT INTO joueur VALUES ('1', '1997-09-15');
+INSERT INTO equipes_pro_enum VALUES ('FC Bayern');
+INSERT INTO equipes_pro_enum VALUES ('Olympique Lyonnais');
+INSERT INTO equipes_pro_enum VALUES ('France National');
+INSERT INTO equipes_pro_enum VALUES ('Real Madrid');
+INSERT INTO equipes_pro_enum VALUES ('Manchester United F.C.');
+INSERT INTO equipes_pro_enum VALUES ('Arsenal F.C.');
+INSERT INTO equipes_pro_enum VALUES ('Chelsea F.C.');
+INSERT INTO equipes_pro_enum VALUES ('Brazil nationnal');
+INSERT INTO equipes_pro_enum VALUES ('AS Monaco');
+INSERT INTO equipes_pro_enum VALUES ('Liverpool F.C.');
+INSERT INTO equipes_pro_enum VALUES ('Spain N.F.C.');
+INSERT INTO equipes_pro_enum VALUES ('F.C. Barcelona');
+INSERT INTO pays_enum VALUES ('Uruguay');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Howard', 'George', '1971-04-04', 'Uruguay', 'M');
+INSERT INTO joueur VALUES ('1', '1999-08-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Creech', 'Morris', '1980-09-16', 'Uruguay', 'M');
-INSERT INTO joueur VALUES ('2', '1997-05-05');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sanders', 'Robert', '1975-03-04', 'Uruguay', 'M');
+INSERT INTO joueur VALUES ('2', '1998-11-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rogers', 'Michael', '1979-11-17', 'Uruguay', 'M');
-INSERT INTO joueur VALUES ('3', '1997-06-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cooper', 'Steven', '1981-09-12', 'Uruguay', 'M');
+INSERT INTO joueur VALUES ('3', '2001-03-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mitchell', 'Howard', '1982-04-22', 'Uruguay', 'M');
-INSERT INTO joueur VALUES ('4', '2002-09-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Eugene', '1979-08-04', 'Uruguay', 'M');
+INSERT INTO joueur VALUES ('4', '2001-05-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Knupp', 'Wayne', '1981-08-27', 'Uruguay', 'M');
-INSERT INTO joueur VALUES ('5', '1998-08-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Viviano', 'Mark', '1978-06-22', 'Uruguay', 'M');
+INSERT INTO joueur VALUES ('5', '2001-06-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mancias', 'Allen', '1976-09-19', 'Uruguay', 'M');
-INSERT INTO joueur VALUES ('6', '1997-05-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Griffith', 'Alfonso', '1977-08-13', 'Uruguay', 'M');
+INSERT INTO joueur VALUES ('6', '2002-06-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Morales', 'William', '1981-09-24', 'Uruguay', 'M');
-INSERT INTO entraineur VALUES ('7', '1999-11-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Palacios', 'John', '1971-12-11', 'Uruguay', 'M');
+INSERT INTO entraineur VALUES ('7', '2001-03-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carter', 'Wayne', '1976-10-17', 'Uruguay', 'M');
-INSERT INTO collaborateur VALUES ('8', 'Psychologue sportif', '1999-10-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Tighe', 'Jason', '1984-05-25', 'Uruguay', 'M');
+INSERT INTO collaborateur VALUES ('8', 'Psychologue sportif', '1998-12-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kauffman', 'Darrel', '1981-10-03', 'Uruguay', 'M');
-INSERT INTO collaborateur VALUES ('9', 'Medecin', '1997-09-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lipson', 'Dusty', '1983-08-05', 'Uruguay', 'M');
+INSERT INTO collaborateur VALUES ('9', 'Medecin', '2001-12-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Brafman', 'Frank', '1972-06-16', 'Uruguay', 'M');
-INSERT INTO arbitre VALUES ('10', '2000-06-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Henry', 'August', '1976-11-22', 'Uruguay', 'M');
+INSERT INTO arbitre VALUES ('10', '2003-09-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Knox', 'Joseph', '1970-10-09', 'Italie', 'M');
-INSERT INTO joueur VALUES ('11', '2001-11-11');
+INSERT INTO pays_enum VALUES ('Italie');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Freudenthal', 'Buford', '1975-12-08', 'Italie', 'M');
+INSERT INTO joueur VALUES ('11', '2002-04-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Serge', 'James', '1972-03-16', 'Italie', 'M');
-INSERT INTO joueur VALUES ('12', '2001-09-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hecht', 'Leonard', '1982-04-12', 'Italie', 'M');
+INSERT INTO joueur VALUES ('12', '2001-07-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ezell', 'Charles', '1972-03-26', 'Italie', 'M');
-INSERT INTO joueur VALUES ('13', '2003-05-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Delisa', 'Thomas', '1978-05-23', 'Italie', 'M');
+INSERT INTO joueur VALUES ('13', '2000-10-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Tafoya', 'Jessie', '1977-06-27', 'Italie', 'M');
-INSERT INTO joueur VALUES ('14', '1997-06-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Huston', 'Gregory', '1977-12-22', 'Italie', 'M');
+INSERT INTO joueur VALUES ('14', '1998-08-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mills', 'David', '1976-11-27', 'Italie', 'M');
-INSERT INTO joueur VALUES ('15', '1997-10-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carothers', 'James', '1982-09-19', 'Italie', 'M');
+INSERT INTO joueur VALUES ('15', '1999-03-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rodriguez', 'Samuel', '1973-12-21', 'Italie', 'M');
-INSERT INTO joueur VALUES ('16', '2000-05-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Simmons', 'Brian', '1983-10-18', 'Italie', 'M');
+INSERT INTO joueur VALUES ('16', '1999-06-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Wills', 'Pedro', '1975-04-25', 'Italie', 'M');
-INSERT INTO entraineur VALUES ('17', '2000-04-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Joslyn', 'Philip', '1972-04-08', 'Italie', 'M');
+INSERT INTO entraineur VALUES ('17', '1997-04-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Martin', 'Michael', '1972-11-22', 'Italie', 'M');
-INSERT INTO collaborateur VALUES ('18', 'Medecin', '2001-11-22');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Harvey', 'Anthony', '1970-07-05', 'Italie', 'M');
+INSERT INTO collaborateur VALUES ('18', 'Medecin', '2000-06-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Davis', 'John', '1973-08-16', 'Italie', 'M');
-INSERT INTO collaborateur VALUES ('19', 'Physio', '2003-11-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pocai', 'Kenneth', '1977-12-28', 'Italie', 'M');
+INSERT INTO collaborateur VALUES ('19', 'Physiotherapeute', '2001-06-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Haldeman', 'Timothy', '1975-07-11', 'Italie', 'M');
-INSERT INTO arbitre VALUES ('20', '2002-03-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bishop', 'Richard', '1970-06-25', 'Italie', 'M');
+INSERT INTO arbitre VALUES ('20', '2003-08-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hazel', 'Cody', '1982-03-13', 'France', 'M');
-INSERT INTO joueur VALUES ('21', '2001-03-19');
+INSERT INTO pays_enum VALUES ('France');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jordan', 'Edward', '1973-04-05', 'France', 'M');
+INSERT INTO joueur VALUES ('21', '2003-11-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Riddell', 'Christopher', '1982-05-24', 'France', 'M');
-INSERT INTO joueur VALUES ('22', '1998-04-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Eagen', 'Robert', '1977-07-10', 'France', 'M');
+INSERT INTO joueur VALUES ('22', '2001-04-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sloan', 'Joseph', '1971-07-24', 'France', 'M');
-INSERT INTO joueur VALUES ('23', '2000-08-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Morago', 'Carl', '1974-09-20', 'France', 'M');
+INSERT INTO joueur VALUES ('23', '2000-07-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Smith', 'Fernando', '1970-09-18', 'France', 'M');
-INSERT INTO joueur VALUES ('24', '2003-04-09');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Daniels', 'Richard', '1974-06-19', 'France', 'M');
+INSERT INTO joueur VALUES ('24', '1998-08-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Warren', 'David', '1983-03-22', 'France', 'M');
-INSERT INTO joueur VALUES ('25', '1998-03-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mooney', 'Daniel', '1977-10-05', 'France', 'M');
+INSERT INTO joueur VALUES ('25', '1998-10-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Delacruz', 'Joey', '1981-11-22', 'France', 'M');
-INSERT INTO joueur VALUES ('26', '1999-08-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Taylor', 'Willard', '1977-04-15', 'France', 'M');
+INSERT INTO joueur VALUES ('26', '2003-05-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Driver', 'David', '1978-09-11', 'France', 'M');
-INSERT INTO entraineur VALUES ('27', '2003-09-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Barber', 'Kenneth', '1981-10-14', 'France', 'M');
+INSERT INTO entraineur VALUES ('27', '1999-07-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pick', 'Jason', '1977-09-11', 'France', 'M');
-INSERT INTO collaborateur VALUES ('28', 'Physio', '2001-04-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cecilio', 'Dan', '1983-05-26', 'France', 'M');
+INSERT INTO collaborateur VALUES ('28', 'Physiotherapeute', '2000-11-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Reid', 'Carlos', '1976-04-28', 'France', 'M');
-INSERT INTO collaborateur VALUES ('29', 'Psychologue sportif', '1998-07-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Steven', 'Lloyd', '1976-03-14', 'France', 'M');
+INSERT INTO collaborateur VALUES ('29', 'Psychologue sportif', '1997-05-13');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Meyer', 'Timothy', '1977-05-27', 'France', 'M');
-INSERT INTO arbitre VALUES ('30', '2003-07-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Whitton', 'Eric', '1971-11-22', 'France', 'M');
+INSERT INTO arbitre VALUES ('30', '2003-10-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hoffman', 'Edward', '1970-09-14', 'Canada', 'M');
-INSERT INTO joueur VALUES ('31', '1998-03-17');
+INSERT INTO pays_enum VALUES ('Canada');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Artis', 'Reinaldo', '1984-06-16', 'Canada', 'M');
+INSERT INTO joueur VALUES ('31', '2001-10-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Oshea', 'David', '1971-11-10', 'Canada', 'M');
-INSERT INTO joueur VALUES ('32', '2000-10-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Maciel', 'David', '1984-11-07', 'Canada', 'M');
+INSERT INTO joueur VALUES ('32', '1999-10-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dickie', 'Ollie', '1973-05-16', 'Canada', 'M');
-INSERT INTO joueur VALUES ('33', '1999-07-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rinderer', 'Casey', '1983-09-16', 'Canada', 'M');
+INSERT INTO joueur VALUES ('33', '1999-05-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Oneill', 'James', '1977-12-22', 'Canada', 'M');
-INSERT INTO joueur VALUES ('34', '1998-10-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Konecny', 'Gerald', '1970-10-18', 'Canada', 'M');
+INSERT INTO joueur VALUES ('34', '1999-08-13');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bartholomew', 'Steve', '1973-09-09', 'Canada', 'M');
-INSERT INTO joueur VALUES ('35', '1997-05-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Williams', 'Wayne', '1983-05-11', 'Canada', 'M');
+INSERT INTO joueur VALUES ('35', '1999-11-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Staley', 'James', '1980-07-17', 'Canada', 'M');
-INSERT INTO joueur VALUES ('36', '2000-05-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Taylor', 'Frank', '1977-11-05', 'Canada', 'M');
+INSERT INTO joueur VALUES ('36', '1998-04-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Verkamp', 'Delbert', '1977-03-24', 'Canada', 'M');
-INSERT INTO entraineur VALUES ('37', '2002-06-09');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Tapia', 'Charles', '1983-06-06', 'Canada', 'M');
+INSERT INTO entraineur VALUES ('37', '1997-08-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cooley', 'Jerry', '1983-08-22', 'Canada', 'M');
-INSERT INTO collaborateur VALUES ('38', 'Psychologue sportif', '1998-10-05');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bowen', 'Harvey', '1976-05-24', 'Canada', 'M');
+INSERT INTO collaborateur VALUES ('38', 'Psychologue sportif', '1998-12-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Crowley', 'Daniel', '1972-09-23', 'Canada', 'M');
-INSERT INTO collaborateur VALUES ('39', 'Medecin', '1999-10-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Tucker', 'Robert', '1978-10-03', 'Canada', 'M');
+INSERT INTO collaborateur VALUES ('39', 'Medecin', '1997-09-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cincotta', 'Willie', '1980-04-20', 'Canada', 'M');
-INSERT INTO arbitre VALUES ('40', '2000-05-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Johnson', 'William', '1976-04-20', 'Canada', 'M');
+INSERT INTO arbitre VALUES ('40', '1999-12-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Shattuck', 'Jimmy', '1982-12-25', 'Bresil', 'M');
-INSERT INTO joueur VALUES ('41', '2002-03-22');
+INSERT INTO pays_enum VALUES ('Bresil');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Otter', 'Micheal', '1981-09-26', 'Bresil', 'M');
+INSERT INTO joueur VALUES ('41', '2003-05-13');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Garza', 'Rick', '1976-10-03', 'Bresil', 'M');
-INSERT INTO joueur VALUES ('42', '2001-11-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Herbert', 'Derrick', '1981-05-15', 'Bresil', 'M');
+INSERT INTO joueur VALUES ('42', '1998-11-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Firth', 'Noel', '1983-11-10', 'Bresil', 'M');
-INSERT INTO joueur VALUES ('43', '2003-06-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jacquez', 'Allan', '1977-09-23', 'Bresil', 'M');
+INSERT INTO joueur VALUES ('43', '2002-06-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ritter', 'Edward', '1982-07-26', 'Bresil', 'M');
-INSERT INTO joueur VALUES ('44', '2000-11-11');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Nordahl', 'David', '1977-11-27', 'Bresil', 'M');
+INSERT INTO joueur VALUES ('44', '2003-05-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rascoe', 'Harry', '1975-03-05', 'Bresil', 'M');
-INSERT INTO joueur VALUES ('45', '2000-04-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Danley', 'John', '1972-03-03', 'Bresil', 'M');
+INSERT INTO joueur VALUES ('45', '1998-07-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bourgeois', 'Robert', '1983-08-06', 'Bresil', 'M');
-INSERT INTO joueur VALUES ('46', '1998-06-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ballintyn', 'Jessie', '1971-04-21', 'Bresil', 'M');
+INSERT INTO joueur VALUES ('46', '2001-05-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Campos', 'Charles', '1975-09-20', 'Bresil', 'M');
-INSERT INTO entraineur VALUES ('47', '1997-06-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Defibaugh', 'Harvey', '1979-05-19', 'Bresil', 'M');
+INSERT INTO entraineur VALUES ('47', '2003-04-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lanigan', 'Alfred', '1976-04-18', 'Bresil', 'M');
-INSERT INTO collaborateur VALUES ('48', 'Medecin', '1997-08-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Deleon', 'Lester', '1971-04-12', 'Bresil', 'M');
+INSERT INTO collaborateur VALUES ('48', 'Medecin', '2001-07-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Upchurch', 'William', '1982-04-27', 'Bresil', 'M');
-INSERT INTO collaborateur VALUES ('49', 'Physio', '2001-06-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Moore', 'Ernesto', '1982-08-23', 'Bresil', 'M');
+INSERT INTO collaborateur VALUES ('49', 'Physiotherapeute', '2000-08-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Daves', 'Lloyd', '1970-11-12', 'Bresil', 'M');
-INSERT INTO arbitre VALUES ('50', '2003-12-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Huckleberry', 'David', '1972-04-04', 'Bresil', 'M');
+INSERT INTO arbitre VALUES ('50', '1997-04-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Horning', 'William', '1981-06-19', 'Suisse', 'M');
-INSERT INTO joueur VALUES ('51', '2003-06-24');
+INSERT INTO pays_enum VALUES ('Suisse');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Harris', 'William', '1981-05-21', 'Suisse', 'M');
+INSERT INTO joueur VALUES ('51', '1998-10-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Oberry', 'Joshua', '1984-03-25', 'Suisse', 'M');
-INSERT INTO joueur VALUES ('52', '2001-05-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Williams', 'Derek', '1972-04-09', 'Suisse', 'M');
+INSERT INTO joueur VALUES ('52', '2000-10-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sandoval', 'Clyde', '1971-06-14', 'Suisse', 'M');
-INSERT INTO joueur VALUES ('53', '2001-08-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Quinones', 'Alex', '1972-07-15', 'Suisse', 'M');
+INSERT INTO joueur VALUES ('53', '2000-09-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Andrews', 'Edward', '1977-05-14', 'Suisse', 'M');
-INSERT INTO joueur VALUES ('54', '2000-10-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Furnace', 'James', '1970-12-05', 'Suisse', 'M');
+INSERT INTO joueur VALUES ('54', '1999-10-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Harris', 'Terrence', '1971-09-08', 'Suisse', 'M');
-INSERT INTO joueur VALUES ('55', '1997-11-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Para', 'Erwin', '1971-07-22', 'Suisse', 'M');
+INSERT INTO joueur VALUES ('55', '2001-12-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bull', 'Julio', '1979-03-19', 'Suisse', 'M');
-INSERT INTO joueur VALUES ('56', '2001-11-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stovall', 'Ricky', '1977-10-27', 'Suisse', 'M');
+INSERT INTO joueur VALUES ('56', '1998-04-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Butler', 'Joseph', '1984-05-26', 'Suisse', 'M');
-INSERT INTO entraineur VALUES ('57', '1999-11-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rueluas', 'Jose', '1972-05-04', 'Suisse', 'M');
+INSERT INTO entraineur VALUES ('57', '2002-09-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Vaillancourt', 'Daniel', '1982-04-17', 'Suisse', 'M');
-INSERT INTO collaborateur VALUES ('58', 'Physio', '2002-05-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Binford', 'Steven', '1984-03-25', 'Suisse', 'M');
+INSERT INTO collaborateur VALUES ('58', 'Physiotherapeute', '2002-07-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Prieto', 'Tommy', '1971-12-04', 'Suisse', 'M');
-INSERT INTO collaborateur VALUES ('59', 'Psychologue sportif', '2001-10-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Shea', 'Vince', '1972-10-25', 'Suisse', 'M');
+INSERT INTO collaborateur VALUES ('59', 'Psychologue sportif', '2003-08-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kaufman', 'Everette', '1979-10-27', 'Suisse', 'M');
-INSERT INTO arbitre VALUES ('60', '2001-03-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Williams', 'Christopher', '1970-09-10', 'Suisse', 'M');
+INSERT INTO arbitre VALUES ('60', '2001-08-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jackson', 'Michael', '1972-11-13', 'Suede', 'M');
-INSERT INTO joueur VALUES ('61', '2003-11-15');
+INSERT INTO pays_enum VALUES ('Suede');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hogston', 'Harry', '1970-11-14', 'Suede', 'M');
+INSERT INTO joueur VALUES ('61', '1999-03-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Williams', 'Paul', '1976-04-19', 'Suede', 'M');
-INSERT INTO joueur VALUES ('62', '1999-06-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Reese', 'Ronald', '1984-05-27', 'Suede', 'M');
+INSERT INTO joueur VALUES ('62', '2001-11-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lotz', 'Eugene', '1977-09-09', 'Suede', 'M');
-INSERT INTO joueur VALUES ('63', '2003-10-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mince', 'Tony', '1979-03-16', 'Suede', 'M');
+INSERT INTO joueur VALUES ('63', '2001-09-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Williams', 'William', '1970-09-13', 'Suede', 'M');
-INSERT INTO joueur VALUES ('64', '2001-11-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Haines', 'William', '1979-06-26', 'Suede', 'M');
+INSERT INTO joueur VALUES ('64', '1998-06-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Becerra', 'Joe', '1974-08-11', 'Suede', 'M');
-INSERT INTO joueur VALUES ('65', '1999-12-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cochran', 'John', '1976-10-09', 'Suede', 'M');
+INSERT INTO joueur VALUES ('65', '1998-03-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Blaylock', 'Ray', '1979-06-08', 'Suede', 'M');
-INSERT INTO joueur VALUES ('66', '2002-06-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Maxwell', 'Randall', '1976-09-05', 'Suede', 'M');
+INSERT INTO joueur VALUES ('66', '1998-09-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Locks', 'Jerome', '1971-10-05', 'Suede', 'M');
-INSERT INTO entraineur VALUES ('67', '1997-05-11');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Whitt', 'Robert', '1981-11-25', 'Suede', 'M');
+INSERT INTO entraineur VALUES ('67', '2001-03-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Batts', 'Robert', '1972-04-27', 'Suede', 'M');
-INSERT INTO collaborateur VALUES ('68', 'Psychologue sportif', '2001-04-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Hector', '1973-03-09', 'Suede', 'M');
+INSERT INTO collaborateur VALUES ('68', 'Psychologue sportif', '2001-03-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ohl', 'Robert', '1970-07-25', 'Suede', 'M');
-INSERT INTO collaborateur VALUES ('69', 'Medecin', '2001-08-04');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Anthony', '1977-07-08', 'Suede', 'M');
+INSERT INTO collaborateur VALUES ('69', 'Medecin', '2002-07-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Palmer', 'Jonathan', '1973-03-19', 'Suede', 'M');
-INSERT INTO arbitre VALUES ('70', '1999-09-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Arguelles', 'Mark', '1984-10-24', 'Suede', 'M');
+INSERT INTO arbitre VALUES ('70', '1998-05-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stevens', 'Morton', '1975-07-14', 'Chili', 'M');
-INSERT INTO joueur VALUES ('71', '1999-07-23');
+INSERT INTO pays_enum VALUES ('Chili');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Smith', 'Tom', '1979-03-09', 'Chili', 'M');
+INSERT INTO joueur VALUES ('71', '2002-08-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mattlin', 'Alex', '1983-04-10', 'Chili', 'M');
-INSERT INTO joueur VALUES ('72', '2002-07-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Fix', 'Edward', '1978-07-09', 'Chili', 'M');
+INSERT INTO joueur VALUES ('72', '2003-08-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rios', 'Floyd', '1978-10-06', 'Chili', 'M');
-INSERT INTO joueur VALUES ('73', '2002-11-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Argento', 'Robert', '1971-04-11', 'Chili', 'M');
+INSERT INTO joueur VALUES ('73', '2000-07-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Quint', 'Cruz', '1981-08-05', 'Chili', 'M');
-INSERT INTO joueur VALUES ('74', '2001-11-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dykes', 'Cruz', '1977-10-13', 'Chili', 'M');
+INSERT INTO joueur VALUES ('74', '1997-03-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kapp', 'Ernest', '1981-08-22', 'Chili', 'M');
-INSERT INTO joueur VALUES ('75', '1997-12-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Baugh', 'James', '1982-08-27', 'Chili', 'M');
+INSERT INTO joueur VALUES ('75', '2001-04-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lewis', 'Jaime', '1981-07-24', 'Chili', 'M');
-INSERT INTO joueur VALUES ('76', '2003-07-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Binder', 'William', '1971-12-14', 'Chili', 'M');
+INSERT INTO joueur VALUES ('76', '2003-10-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Williams', 'Aaron', '1972-10-28', 'Chili', 'M');
-INSERT INTO entraineur VALUES ('77', '1998-04-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mills', 'Henry', '1982-11-10', 'Chili', 'M');
+INSERT INTO entraineur VALUES ('77', '2003-05-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dossey', 'Glen', '1975-11-13', 'Chili', 'M');
-INSERT INTO collaborateur VALUES ('78', 'Medecin', '2000-04-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pettit', 'Christian', '1971-04-28', 'Chili', 'M');
+INSERT INTO collaborateur VALUES ('78', 'Medecin', '1998-04-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Valdez', 'Michael', '1980-07-26', 'Chili', 'M');
-INSERT INTO collaborateur VALUES ('79', 'Physio', '2001-07-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Macnab', 'Brian', '1975-03-25', 'Chili', 'M');
+INSERT INTO collaborateur VALUES ('79', 'Physiotherapeute', '2000-11-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Curtis', 'William', '1982-06-14', 'Chili', 'M');
-INSERT INTO arbitre VALUES ('80', '2002-03-13');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Charles', 'John', '1976-03-23', 'Chili', 'M');
+INSERT INTO arbitre VALUES ('80', '2002-11-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Patrick', '1970-08-11', 'Angleterre', 'M');
-INSERT INTO joueur VALUES ('81', '2002-09-28');
+INSERT INTO pays_enum VALUES ('Angleterre');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Guillermo', 'Ben', '1984-08-11', 'Angleterre', 'M');
+INSERT INTO joueur VALUES ('81', '1999-10-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Matthews', 'Jordan', '1984-05-25', 'Angleterre', 'M');
-INSERT INTO joueur VALUES ('82', '2003-10-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cokley', 'Jason', '1974-03-22', 'Angleterre', 'M');
+INSERT INTO joueur VALUES ('82', '2003-11-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Wilson', 'Gary', '1982-07-18', 'Angleterre', 'M');
-INSERT INTO joueur VALUES ('83', '2001-10-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bustos', 'Donnell', '1979-06-18', 'Angleterre', 'M');
+INSERT INTO joueur VALUES ('83', '2001-12-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Swanger', 'Stephen', '1981-08-24', 'Angleterre', 'M');
-INSERT INTO joueur VALUES ('84', '2001-07-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Wyatt', 'Maurice', '1980-08-05', 'Angleterre', 'M');
+INSERT INTO joueur VALUES ('84', '1999-12-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Monroe', 'Warren', '1981-05-17', 'Angleterre', 'M');
-INSERT INTO joueur VALUES ('85', '2003-07-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Chen', 'Michael', '1973-06-17', 'Angleterre', 'M');
+INSERT INTO joueur VALUES ('85', '1999-11-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Trombetta', 'Glenn', '1981-10-21', 'Angleterre', 'M');
-INSERT INTO joueur VALUES ('86', '2003-05-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Shine', 'Linwood', '1977-10-19', 'Angleterre', 'M');
+INSERT INTO joueur VALUES ('86', '2002-11-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Reynolds', 'David', '1970-06-18', 'Angleterre', 'M');
-INSERT INTO entraineur VALUES ('87', '1999-05-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Torrey', 'Frank', '1973-04-26', 'Angleterre', 'M');
+INSERT INTO entraineur VALUES ('87', '2002-07-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dart', 'Nelson', '1974-12-21', 'Angleterre', 'M');
-INSERT INTO collaborateur VALUES ('88', 'Physio', '2001-12-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ray', 'Mark', '1982-09-26', 'Angleterre', 'M');
+INSERT INTO collaborateur VALUES ('88', 'Physiotherapeute', '1999-06-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Garmon', 'Issac', '1981-03-21', 'Angleterre', 'M');
-INSERT INTO collaborateur VALUES ('89', 'Psychologue sportif', '1999-03-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rangel', 'David', '1983-07-14', 'Angleterre', 'M');
+INSERT INTO collaborateur VALUES ('89', 'Psychologue sportif', '1997-09-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hale', 'Alexander', '1983-10-14', 'Angleterre', 'M');
-INSERT INTO arbitre VALUES ('90', '2001-10-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Neil', 'Leonard', '1978-12-25', 'Angleterre', 'M');
+INSERT INTO arbitre VALUES ('90', '2002-09-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Galbreath', 'Bennie', '1972-11-08', 'Mexique', 'M');
-INSERT INTO joueur VALUES ('91', '2001-07-20');
+INSERT INTO pays_enum VALUES ('Mexique');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pease', 'Stephen', '1970-09-13', 'Mexique', 'M');
+INSERT INTO joueur VALUES ('91', '1998-07-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Herrera', 'Thomas', '1975-04-15', 'Mexique', 'M');
-INSERT INTO joueur VALUES ('92', '2002-04-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Wickham', 'Joe', '1978-05-16', 'Mexique', 'M');
+INSERT INTO joueur VALUES ('92', '1998-07-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Partridge', 'Norman', '1976-05-23', 'Mexique', 'M');
-INSERT INTO joueur VALUES ('93', '2003-11-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Barros', 'Donald', '1971-05-22', 'Mexique', 'M');
+INSERT INTO joueur VALUES ('93', '2000-04-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Brian', '1975-04-20', 'Mexique', 'M');
-INSERT INTO joueur VALUES ('94', '2000-05-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bray', 'Jospeh', '1976-03-06', 'Mexique', 'M');
+INSERT INTO joueur VALUES ('94', '2002-08-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Desilva', 'Edward', '1979-06-17', 'Mexique', 'M');
-INSERT INTO joueur VALUES ('95', '2001-12-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Brown', 'Marvin', '1979-11-20', 'Mexique', 'M');
+INSERT INTO joueur VALUES ('95', '2000-12-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Backus', 'John', '1982-03-12', 'Mexique', 'M');
-INSERT INTO joueur VALUES ('96', '1997-05-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Delgado', 'Justin', '1972-09-07', 'Mexique', 'M');
+INSERT INTO joueur VALUES ('96', '2003-10-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sherwood', 'Jacob', '1981-06-24', 'Mexique', 'M');
-INSERT INTO entraineur VALUES ('97', '2002-11-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Joyner', 'Brain', '1971-12-10', 'Mexique', 'M');
+INSERT INTO entraineur VALUES ('97', '2000-08-13');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Burrington', 'Larry', '1977-12-28', 'Mexique', 'M');
-INSERT INTO collaborateur VALUES ('98', 'Psychologue sportif', '2000-04-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Todd', 'Dale', '1980-09-23', 'Mexique', 'M');
+INSERT INTO collaborateur VALUES ('98', 'Psychologue sportif', '1998-12-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pearson', 'James', '1978-09-14', 'Mexique', 'M');
-INSERT INTO collaborateur VALUES ('99', 'Medecin', '2000-09-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Fiore', 'Jose', '1976-06-17', 'Mexique', 'M');
+INSERT INTO collaborateur VALUES ('99', 'Medecin', '2001-05-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rivera', 'Thomas', '1971-09-03', 'Mexique', 'M');
-INSERT INTO arbitre VALUES ('100', '2003-09-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lucas', 'Roger', '1974-06-13', 'Mexique', 'M');
+INSERT INTO arbitre VALUES ('100', '2001-03-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sullivan', 'Donald', '1973-12-25', 'Allemagne', 'M');
-INSERT INTO joueur VALUES ('101', '1999-10-10');
+INSERT INTO pays_enum VALUES ('Allemagne');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cantu', 'Hubert', '1971-11-08', 'Allemagne', 'M');
+INSERT INTO joueur VALUES ('101', '2002-12-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sherman', 'Ron', '1981-07-16', 'Allemagne', 'M');
-INSERT INTO joueur VALUES ('102', '2001-11-22');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Moody', 'Charles', '1974-08-21', 'Allemagne', 'M');
+INSERT INTO joueur VALUES ('102', '1998-12-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carpenter', 'Bryan', '1970-10-25', 'Allemagne', 'M');
-INSERT INTO joueur VALUES ('103', '2001-03-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hamilton', 'Charles', '1981-12-04', 'Allemagne', 'M');
+INSERT INTO joueur VALUES ('103', '1998-09-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bennett', 'Randy', '1981-07-22', 'Allemagne', 'M');
-INSERT INTO joueur VALUES ('104', '1998-03-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cliff', 'Milton', '1981-10-12', 'Allemagne', 'M');
+INSERT INTO joueur VALUES ('104', '1998-10-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Patterson', 'Mark', '1984-12-17', 'Allemagne', 'M');
-INSERT INTO joueur VALUES ('105', '2003-04-05');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mcgrew', 'Jesse', '1971-10-27', 'Allemagne', 'M');
+INSERT INTO joueur VALUES ('105', '1998-06-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Smith', 'Thomas', '1974-08-11', 'Allemagne', 'M');
-INSERT INTO joueur VALUES ('106', '2001-08-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pittman', 'Richard', '1981-10-27', 'Allemagne', 'M');
+INSERT INTO joueur VALUES ('106', '1998-05-05');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Orefice', 'Colin', '1976-11-24', 'Allemagne', 'M');
-INSERT INTO entraineur VALUES ('107', '2003-03-11');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rush', 'Vernon', '1982-03-25', 'Allemagne', 'M');
+INSERT INTO entraineur VALUES ('107', '1997-12-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Fernandez', 'Francisco', '1972-05-10', 'Allemagne', 'M');
-INSERT INTO collaborateur VALUES ('108', 'Medecin', '1997-05-09');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Owens', 'Billy', '1971-10-20', 'Allemagne', 'M');
+INSERT INTO collaborateur VALUES ('108', 'Medecin', '2000-12-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hicks', 'Donald', '1979-07-18', 'Allemagne', 'M');
-INSERT INTO collaborateur VALUES ('109', 'Physio', '1999-03-09');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ayala', 'Gary', '1980-05-04', 'Allemagne', 'M');
+INSERT INTO collaborateur VALUES ('109', 'Physiotherapeute', '2003-07-13');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Russell', 'David', '1975-05-11', 'Allemagne', 'M');
-INSERT INTO arbitre VALUES ('110', '1997-10-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rodarte', 'Horace', '1979-05-16', 'Allemagne', 'M');
+INSERT INTO arbitre VALUES ('110', '2003-09-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Vasher', 'Matthew', '1971-09-13', 'Portugal', 'M');
-INSERT INTO joueur VALUES ('111', '2001-07-13');
+INSERT INTO pays_enum VALUES ('Portugal');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Deloney', 'Leroy', '1971-09-14', 'Portugal', 'M');
+INSERT INTO joueur VALUES ('111', '2001-12-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cobbs', 'Timothy', '1976-11-06', 'Portugal', 'M');
-INSERT INTO joueur VALUES ('112', '1997-07-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carter', 'David', '1975-07-08', 'Portugal', 'M');
+INSERT INTO joueur VALUES ('112', '2001-11-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stokes', 'Erick', '1980-08-09', 'Portugal', 'M');
-INSERT INTO joueur VALUES ('113', '1997-03-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Collins', 'Francis', '1972-06-04', 'Portugal', 'M');
+INSERT INTO joueur VALUES ('113', '1998-07-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cayea', 'Edwin', '1971-08-27', 'Portugal', 'M');
-INSERT INTO joueur VALUES ('114', '2003-12-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Reeves', 'James', '1970-05-20', 'Portugal', 'M');
+INSERT INTO joueur VALUES ('114', '2000-07-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cox', 'Alejandro', '1981-06-20', 'Portugal', 'M');
-INSERT INTO joueur VALUES ('115', '2000-08-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Meyers', 'Mark', '1970-10-21', 'Portugal', 'M');
+INSERT INTO joueur VALUES ('115', '1999-07-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Anaya', 'Lawrence', '1978-06-22', 'Portugal', 'M');
-INSERT INTO joueur VALUES ('116', '2001-06-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dash', 'William', '1983-10-28', 'Portugal', 'M');
+INSERT INTO joueur VALUES ('116', '2003-07-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rodrigues', 'Bruce', '1975-10-04', 'Portugal', 'M');
-INSERT INTO entraineur VALUES ('117', '1997-07-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cirino', 'Joseph', '1975-11-14', 'Portugal', 'M');
+INSERT INTO entraineur VALUES ('117', '1998-03-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hayes', 'Joe', '1984-06-19', 'Portugal', 'M');
-INSERT INTO collaborateur VALUES ('118', 'Physio', '1998-03-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Henderson', 'Gilbert', '1981-03-15', 'Portugal', 'M');
+INSERT INTO collaborateur VALUES ('118', 'Physiotherapeute', '2002-07-05');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Vonsoosten', 'James', '1984-03-06', 'Portugal', 'M');
-INSERT INTO collaborateur VALUES ('119', 'Psychologue sportif', '2002-12-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Holloway', 'Willie', '1977-10-26', 'Portugal', 'M');
+INSERT INTO collaborateur VALUES ('119', 'Psychologue sportif', '2002-08-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Martinez', 'David', '1971-04-04', 'Portugal', 'M');
-INSERT INTO arbitre VALUES ('120', '2000-06-04');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mccollum', 'James', '1984-07-22', 'Portugal', 'M');
+INSERT INTO arbitre VALUES ('120', '2003-08-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Faurrieta', 'Claude', '1982-09-06', 'Autriche', 'M');
-INSERT INTO joueur VALUES ('121', '1999-08-14');
+INSERT INTO pays_enum VALUES ('Autriche');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Baker', 'William', '1979-09-24', 'Autriche', 'M');
+INSERT INTO joueur VALUES ('121', '1997-11-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mcqueen', 'Paul', '1982-03-16', 'Autriche', 'M');
-INSERT INTO joueur VALUES ('122', '1999-10-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Parker', 'Gregory', '1971-12-17', 'Autriche', 'M');
+INSERT INTO joueur VALUES ('122', '1998-06-05');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Miller', 'Robert', '1972-06-20', 'Autriche', 'M');
-INSERT INTO joueur VALUES ('123', '2000-09-22');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Simpson', 'Joshua', '1973-07-04', 'Autriche', 'M');
+INSERT INTO joueur VALUES ('123', '2001-08-05');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Foreman', 'Rickey', '1970-05-25', 'Autriche', 'M');
-INSERT INTO joueur VALUES ('124', '2000-10-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Owen', 'Jeffery', '1977-12-08', 'Autriche', 'M');
+INSERT INTO joueur VALUES ('124', '2001-08-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pikes', 'John', '1970-11-03', 'Autriche', 'M');
-INSERT INTO joueur VALUES ('125', '2000-07-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Griffin', 'Thomas', '1984-12-24', 'Autriche', 'M');
+INSERT INTO joueur VALUES ('125', '2000-12-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ogilvie', 'Dale', '1974-04-21', 'Autriche', 'M');
-INSERT INTO joueur VALUES ('126', '1998-10-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Amick', 'Thomas', '1972-11-27', 'Autriche', 'M');
+INSERT INTO joueur VALUES ('126', '2000-12-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Vetrano', 'Roman', '1978-11-27', 'Autriche', 'M');
-INSERT INTO entraineur VALUES ('127', '2001-11-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('White', 'Jonathan', '1978-04-11', 'Autriche', 'M');
+INSERT INTO entraineur VALUES ('127', '2000-06-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cloutier', 'Enrique', '1983-11-05', 'Autriche', 'M');
-INSERT INTO collaborateur VALUES ('128', 'Psychologue sportif', '1998-11-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hatfield', 'Calvin', '1979-05-23', 'Autriche', 'M');
+INSERT INTO collaborateur VALUES ('128', 'Psychologue sportif', '1997-04-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Perez', 'Angel', '1973-07-06', 'Autriche', 'M');
-INSERT INTO collaborateur VALUES ('129', 'Medecin', '1999-12-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gonsales', 'Kelly', '1971-09-26', 'Autriche', 'M');
+INSERT INTO collaborateur VALUES ('129', 'Medecin', '1998-08-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mcrary', 'Jeffry', '1975-11-04', 'Autriche', 'M');
-INSERT INTO arbitre VALUES ('130', '2002-05-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pacheco', 'Charles', '1975-03-20', 'Autriche', 'M');
+INSERT INTO arbitre VALUES ('130', '1997-04-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cook', 'David', '1972-05-16', 'Yougoslavie', 'M');
-INSERT INTO joueur VALUES ('131', '2002-07-13');
+INSERT INTO pays_enum VALUES ('Yougoslavie');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sessoms', 'Peter', '1984-12-25', 'Yougoslavie', 'M');
+INSERT INTO joueur VALUES ('131', '2002-07-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mccune', 'James', '1975-06-25', 'Yougoslavie', 'M');
-INSERT INTO joueur VALUES ('132', '2003-04-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jackson', 'Matthew', '1974-06-24', 'Yougoslavie', 'M');
+INSERT INTO joueur VALUES ('132', '2003-10-13');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hawkins', 'David', '1978-07-16', 'Yougoslavie', 'M');
-INSERT INTO joueur VALUES ('133', '1999-05-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bivens', 'Terry', '1970-04-07', 'Yougoslavie', 'M');
+INSERT INTO joueur VALUES ('133', '1998-09-05');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Perry', 'Bill', '1972-12-23', 'Yougoslavie', 'M');
-INSERT INTO joueur VALUES ('134', '2002-10-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kelly', 'Jordan', '1983-06-08', 'Yougoslavie', 'M');
+INSERT INTO joueur VALUES ('134', '1999-09-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Nunez', 'Aaron', '1972-08-12', 'Yougoslavie', 'M');
-INSERT INTO joueur VALUES ('135', '1999-09-05');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Burton', 'Troy', '1973-08-14', 'Yougoslavie', 'M');
+INSERT INTO joueur VALUES ('135', '2001-09-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ascolese', 'Mark', '1984-07-27', 'Yougoslavie', 'M');
-INSERT INTO joueur VALUES ('136', '2002-09-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Konrad', 'Devin', '1981-10-03', 'Yougoslavie', 'M');
+INSERT INTO joueur VALUES ('136', '1998-09-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Drake', 'Mike', '1977-06-16', 'Yougoslavie', 'M');
-INSERT INTO entraineur VALUES ('137', '1997-12-08');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Heath', 'Garry', '1983-10-09', 'Yougoslavie', 'M');
+INSERT INTO entraineur VALUES ('137', '1998-11-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Osteen', 'Mark', '1971-11-12', 'Yougoslavie', 'M');
-INSERT INTO collaborateur VALUES ('138', 'Medecin', '1997-03-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Fleming', 'Fred', '1971-03-05', 'Yougoslavie', 'M');
+INSERT INTO collaborateur VALUES ('138', 'Medecin', '1997-12-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Davis', 'Dennis', '1973-12-13', 'Yougoslavie', 'M');
-INSERT INTO collaborateur VALUES ('139', 'Physio', '2000-09-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rentfro', 'Travis', '1971-11-12', 'Yougoslavie', 'M');
+INSERT INTO collaborateur VALUES ('139', 'Physiotherapeute', '2001-07-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Williams', 'Jackson', '1977-12-26', 'Yougoslavie', 'M');
-INSERT INTO arbitre VALUES ('140', '2002-06-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Chouteau', 'Ned', '1974-08-13', 'Yougoslavie', 'M');
+INSERT INTO arbitre VALUES ('140', '2002-05-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sanderlin', 'Howard', '1978-08-16', 'Union sovietique', 'M');
-INSERT INTO joueur VALUES ('141', '1998-05-08');
+INSERT INTO pays_enum VALUES ('Union sovietique');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Somerville', 'Daniel', '1971-09-28', 'Union sovietique', 'M');
+INSERT INTO joueur VALUES ('141', '2003-12-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Boyd', 'Christopher', '1981-08-15', 'Union sovietique', 'M');
-INSERT INTO joueur VALUES ('142', '2003-04-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Uitz', 'Eli', '1983-03-13', 'Union sovietique', 'M');
+INSERT INTO joueur VALUES ('142', '1997-03-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lundy', 'George', '1974-03-17', 'Union sovietique', 'M');
-INSERT INTO joueur VALUES ('143', '1997-07-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Robins', 'Shelby', '1981-04-22', 'Union sovietique', 'M');
+INSERT INTO joueur VALUES ('143', '2003-12-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Tucker', 'Jay', '1978-03-22', 'Union sovietique', 'M');
-INSERT INTO joueur VALUES ('144', '2001-10-09');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Giuliano', 'Elbert', '1973-11-23', 'Union sovietique', 'M');
+INSERT INTO joueur VALUES ('144', '1997-03-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Febus', 'Marion', '1975-05-05', 'Union sovietique', 'M');
-INSERT INTO joueur VALUES ('145', '2000-03-22');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sunday', 'Steven', '1972-05-12', 'Union sovietique', 'M');
+INSERT INTO joueur VALUES ('145', '2001-09-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sonderegger', 'Ernest', '1982-05-28', 'Union sovietique', 'M');
-INSERT INTO joueur VALUES ('146', '1997-05-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hutton', 'William', '1981-05-04', 'Union sovietique', 'M');
+INSERT INTO joueur VALUES ('146', '2001-06-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rappa', 'Ryan', '1976-08-28', 'Union sovietique', 'M');
-INSERT INTO entraineur VALUES ('147', '1999-03-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lozoya', 'Craig', '1978-10-16', 'Union sovietique', 'M');
+INSERT INTO entraineur VALUES ('147', '2002-03-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Martin', 'Jake', '1984-05-17', 'Union sovietique', 'M');
-INSERT INTO collaborateur VALUES ('148', 'Physio', '2001-08-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lange', 'Richard', '1975-04-25', 'Union sovietique', 'M');
+INSERT INTO collaborateur VALUES ('148', 'Physiotherapeute', '2001-08-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ratzlaff', 'Pablo', '1976-04-11', 'Union sovietique', 'M');
-INSERT INTO collaborateur VALUES ('149', 'Psychologue sportif', '2002-09-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Aumick', 'Ronald', '1977-07-03', 'Union sovietique', 'M');
+INSERT INTO collaborateur VALUES ('149', 'Psychologue sportif', '2001-04-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mccleese', 'Charles', '1983-07-16', 'Union sovietique', 'M');
-INSERT INTO arbitre VALUES ('150', '1997-10-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Valenzuela', 'Isaiah', '1979-05-19', 'Union sovietique', 'M');
+INSERT INTO arbitre VALUES ('150', '2001-03-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Robinson', 'Jonathan', '1973-05-27', 'Tchecoslovaquie', 'M');
-INSERT INTO joueur VALUES ('151', '1997-05-20');
+INSERT INTO pays_enum VALUES ('Tchecoslovaquie');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gaddy', 'Ricky', '1975-07-14', 'Tchecoslovaquie', 'M');
+INSERT INTO joueur VALUES ('151', '2002-11-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hammond', 'Larry', '1983-05-18', 'Tchecoslovaquie', 'M');
-INSERT INTO joueur VALUES ('152', '1997-11-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Brown', 'Danny', '1979-04-22', 'Tchecoslovaquie', 'M');
+INSERT INTO joueur VALUES ('152', '1999-09-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cherry', 'Joshua', '1984-07-22', 'Tchecoslovaquie', 'M');
-INSERT INTO joueur VALUES ('153', '2001-12-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Harris', 'Howard', '1975-12-22', 'Tchecoslovaquie', 'M');
+INSERT INTO joueur VALUES ('153', '1998-05-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Witt', 'Steven', '1979-11-18', 'Tchecoslovaquie', 'M');
-INSERT INTO joueur VALUES ('154', '2000-12-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Washington', 'Neil', '1972-07-08', 'Tchecoslovaquie', 'M');
+INSERT INTO joueur VALUES ('154', '1999-11-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Daniel', 'Robert', '1984-11-08', 'Tchecoslovaquie', 'M');
-INSERT INTO joueur VALUES ('155', '2000-06-11');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Serrato', 'Bryce', '1977-04-06', 'Tchecoslovaquie', 'M');
+INSERT INTO joueur VALUES ('155', '2000-11-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Walker', 'Michael', '1977-10-11', 'Tchecoslovaquie', 'M');
-INSERT INTO joueur VALUES ('156', '1999-08-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lynch', 'William', '1977-04-11', 'Tchecoslovaquie', 'M');
+INSERT INTO joueur VALUES ('156', '2002-06-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Richardson', 'John', '1982-04-11', 'Tchecoslovaquie', 'M');
-INSERT INTO entraineur VALUES ('157', '2000-04-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Huang', 'Marvin', '1971-06-16', 'Tchecoslovaquie', 'M');
+INSERT INTO entraineur VALUES ('157', '1997-10-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Oaks', 'Mark', '1976-04-27', 'Tchecoslovaquie', 'M');
-INSERT INTO collaborateur VALUES ('158', 'Psychologue sportif', '2000-04-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Feliz', 'Kirby', '1983-06-28', 'Tchecoslovaquie', 'M');
+INSERT INTO collaborateur VALUES ('158', 'Psychologue sportif', '1997-03-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carder', 'Cedrick', '1976-11-26', 'Tchecoslovaquie', 'M');
-INSERT INTO collaborateur VALUES ('159', 'Medecin', '1998-07-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Young', 'Lester', '1981-04-21', 'Tchecoslovaquie', 'M');
+INSERT INTO collaborateur VALUES ('159', 'Medecin', '1999-07-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Vasmadjides', 'John', '1976-06-08', 'Tchecoslovaquie', 'M');
-INSERT INTO arbitre VALUES ('160', '1998-10-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jeanes', 'Ryan', '1974-07-23', 'Tchecoslovaquie', 'M');
+INSERT INTO arbitre VALUES ('160', '2002-09-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Satterfield', 'Gordon', '1977-04-06', 'Pologne', 'M');
-INSERT INTO joueur VALUES ('161', '1998-05-10');
+INSERT INTO pays_enum VALUES ('Pologne');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Davies', 'Philip', '1981-03-09', 'Pologne', 'M');
+INSERT INTO joueur VALUES ('161', '2000-05-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Love', 'Paul', '1975-12-23', 'Pologne', 'M');
-INSERT INTO joueur VALUES ('162', '1999-07-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Brandon', 'Anthony', '1984-05-18', 'Pologne', 'M');
+INSERT INTO joueur VALUES ('162', '1997-03-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Anderson', 'William', '1981-10-08', 'Pologne', 'M');
-INSERT INTO joueur VALUES ('163', '1999-08-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Antonio', 'Jason', '1972-04-20', 'Pologne', 'M');
+INSERT INTO joueur VALUES ('163', '1998-04-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Oneil', 'Michael', '1971-12-07', 'Pologne', 'M');
-INSERT INTO joueur VALUES ('164', '1998-10-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mayne', 'James', '1983-07-07', 'Pologne', 'M');
+INSERT INTO joueur VALUES ('164', '2000-08-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dess', 'Vernon', '1971-03-14', 'Pologne', 'M');
-INSERT INTO joueur VALUES ('165', '1997-10-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Wilkins', 'James', '1981-05-27', 'Pologne', 'M');
+INSERT INTO joueur VALUES ('165', '2002-05-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Robinson', 'James', '1977-04-24', 'Pologne', 'M');
-INSERT INTO joueur VALUES ('166', '2001-07-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cashion', 'Sean', '1981-08-08', 'Pologne', 'M');
+INSERT INTO joueur VALUES ('166', '2000-07-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Joyner', 'Dale', '1976-11-17', 'Pologne', 'M');
-INSERT INTO entraineur VALUES ('167', '2002-09-04');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Reyes', 'David', '1983-04-10', 'Pologne', 'M');
+INSERT INTO entraineur VALUES ('167', '1999-10-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Eichorst', 'Bruce', '1974-04-09', 'Pologne', 'M');
-INSERT INTO collaborateur VALUES ('168', 'Medecin', '1997-12-08');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carr', 'Lewis', '1974-11-06', 'Pologne', 'M');
+INSERT INTO collaborateur VALUES ('168', 'Medecin', '1999-05-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Johnson', 'Robert', '1977-11-16', 'Pologne', 'M');
-INSERT INTO collaborateur VALUES ('169', 'Physio', '1997-08-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dennis', 'Bill', '1973-04-06', 'Pologne', 'M');
+INSERT INTO collaborateur VALUES ('169', 'Physiotherapeute', '2002-08-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lindo', 'Charles', '1982-12-14', 'Pologne', 'M');
-INSERT INTO arbitre VALUES ('170', '1999-12-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Day', 'Dallas', '1970-08-10', 'Pologne', 'M');
+INSERT INTO arbitre VALUES ('170', '2003-05-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Chamberlin', 'Andrew', '1979-03-22', 'Argentine', 'M');
-INSERT INTO joueur VALUES ('171', '2001-06-15');
+INSERT INTO pays_enum VALUES ('Argentine');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Marin', 'Floyd', '1983-07-14', 'Argentine', 'M');
+INSERT INTO joueur VALUES ('171', '1999-06-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Radsky', 'Jeffrey', '1972-11-09', 'Argentine', 'M');
-INSERT INTO joueur VALUES ('172', '1998-11-04');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Davis', 'Eric', '1975-09-21', 'Argentine', 'M');
+INSERT INTO joueur VALUES ('172', '2003-12-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lathrop', 'Wesley', '1971-07-17', 'Argentine', 'M');
-INSERT INTO joueur VALUES ('173', '2002-09-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mortensen', 'Thomas', '1982-06-20', 'Argentine', 'M');
+INSERT INTO joueur VALUES ('173', '2003-09-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rybowiak', 'Christopher', '1971-04-03', 'Argentine', 'M');
-INSERT INTO joueur VALUES ('174', '1999-03-08');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lacaze', 'Brian', '1972-07-13', 'Argentine', 'M');
+INSERT INTO joueur VALUES ('174', '2001-08-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Egnew', 'Luis', '1972-06-27', 'Argentine', 'M');
-INSERT INTO joueur VALUES ('175', '1997-10-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Silver', 'Wade', '1970-06-27', 'Argentine', 'M');
+INSERT INTO joueur VALUES ('175', '2003-10-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rangel', 'Jonathan', '1973-11-28', 'Argentine', 'M');
-INSERT INTO joueur VALUES ('176', '1999-10-04');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Omalley', 'Andrew', '1984-11-03', 'Argentine', 'M');
+INSERT INTO joueur VALUES ('176', '1997-10-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Franzen', 'Daniel', '1983-04-03', 'Argentine', 'M');
-INSERT INTO entraineur VALUES ('177', '2000-11-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gibbons', 'Henry', '1984-04-19', 'Argentine', 'M');
+INSERT INTO entraineur VALUES ('177', '2002-03-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Christopher', 'Nicholas', '1978-10-11', 'Argentine', 'M');
-INSERT INTO collaborateur VALUES ('178', 'Physio', '2000-11-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Holt', 'Eduardo', '1978-10-13', 'Argentine', 'M');
+INSERT INTO collaborateur VALUES ('178', 'Physiotherapeute', '1997-10-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Boyter', 'Eugene', '1975-06-07', 'Argentine', 'M');
-INSERT INTO collaborateur VALUES ('179', 'Psychologue sportif', '1997-09-05');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Segarra', 'Jeffrey', '1972-03-26', 'Argentine', 'M');
+INSERT INTO collaborateur VALUES ('179', 'Psychologue sportif', '1999-09-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Taylor', 'Howard', '1970-12-21', 'Argentine', 'M');
-INSERT INTO arbitre VALUES ('180', '2001-06-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gutierrez', 'Charles', '1977-03-21', 'Argentine', 'M');
+INSERT INTO arbitre VALUES ('180', '2000-07-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Terry', 'Carl', '1979-08-10', 'Belgique', 'M');
-INSERT INTO joueur VALUES ('181', '2000-03-07');
+INSERT INTO pays_enum VALUES ('Belgique');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Wilson', 'Thomas', '1970-09-28', 'Belgique', 'M');
+INSERT INTO joueur VALUES ('181', '2001-04-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ogorman', 'Esteban', '1977-07-13', 'Belgique', 'M');
-INSERT INTO joueur VALUES ('182', '2001-07-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Brown', 'Norman', '1973-11-07', 'Belgique', 'M');
+INSERT INTO joueur VALUES ('182', '1999-07-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sammer', 'Michael', '1972-05-13', 'Belgique', 'M');
-INSERT INTO joueur VALUES ('183', '2003-05-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Martinez', 'Christopher', '1982-03-08', 'Belgique', 'M');
+INSERT INTO joueur VALUES ('183', '2001-10-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Robinson', 'Shawn', '1982-04-11', 'Belgique', 'M');
-INSERT INTO joueur VALUES ('184', '2000-08-05');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Greaves', 'Herbert', '1983-06-05', 'Belgique', 'M');
+INSERT INTO joueur VALUES ('184', '1997-12-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Guedry', 'Paul', '1982-08-26', 'Belgique', 'M');
-INSERT INTO joueur VALUES ('185', '1997-06-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ries', 'Curtis', '1970-08-21', 'Belgique', 'M');
+INSERT INTO joueur VALUES ('185', '1999-09-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Smith', 'Jonas', '1973-04-16', 'Belgique', 'M');
-INSERT INTO joueur VALUES ('186', '1998-06-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Khan', 'Carlos', '1970-04-15', 'Belgique', 'M');
+INSERT INTO joueur VALUES ('186', '1997-05-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pomeroy', 'John', '1972-09-23', 'Belgique', 'M');
-INSERT INTO entraineur VALUES ('187', '1997-05-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Midgett', 'Bo', '1978-12-23', 'Belgique', 'M');
+INSERT INTO entraineur VALUES ('187', '1999-12-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dillingham', 'Willie', '1976-03-24', 'Belgique', 'M');
-INSERT INTO collaborateur VALUES ('188', 'Psychologue sportif', '1997-04-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Marion', 'Warren', '1981-11-20', 'Belgique', 'M');
+INSERT INTO collaborateur VALUES ('188', 'Psychologue sportif', '2001-10-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Delong', 'Todd', '1980-04-15', 'Belgique', 'M');
-INSERT INTO collaborateur VALUES ('189', 'Medecin', '2000-04-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hickey', 'Michael', '1982-06-23', 'Belgique', 'M');
+INSERT INTO collaborateur VALUES ('189', 'Medecin', '2000-07-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Charles', 'David', '1975-08-14', 'Belgique', 'M');
-INSERT INTO arbitre VALUES ('190', '1997-06-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Montgomery', 'Enrique', '1981-10-05', 'Belgique', 'M');
+INSERT INTO arbitre VALUES ('190', '2003-11-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jost', 'Robert', '1978-10-08', 'Croatie', 'M');
-INSERT INTO joueur VALUES ('191', '2002-11-03');
+INSERT INTO pays_enum VALUES ('Croatie');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jordan', 'Terry', '1973-10-22', 'Croatie', 'M');
+INSERT INTO joueur VALUES ('191', '2001-09-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Johnston', 'Rufus', '1980-10-28', 'Croatie', 'M');
-INSERT INTO joueur VALUES ('192', '2001-11-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Piner', 'Bryce', '1979-08-23', 'Croatie', 'M');
+INSERT INTO joueur VALUES ('192', '1998-03-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Farley', 'Brian', '1971-03-15', 'Croatie', 'M');
-INSERT INTO joueur VALUES ('193', '1998-04-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kilcoyne', 'Leroy', '1970-03-07', 'Croatie', 'M');
+INSERT INTO joueur VALUES ('193', '2000-07-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hager', 'Miguel', '1974-09-08', 'Croatie', 'M');
-INSERT INTO joueur VALUES ('194', '2000-04-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lowe', 'William', '1983-09-08', 'Croatie', 'M');
+INSERT INTO joueur VALUES ('194', '1998-12-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Haynes', 'Alvin', '1983-11-06', 'Croatie', 'M');
-INSERT INTO joueur VALUES ('195', '2001-06-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Adelson', 'Philip', '1984-07-03', 'Croatie', 'M');
+INSERT INTO joueur VALUES ('195', '2001-12-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Thomas', 'Dustin', '1972-03-09', 'Croatie', 'M');
-INSERT INTO joueur VALUES ('196', '2001-08-05');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Armijo', 'Robert', '1972-08-22', 'Croatie', 'M');
+INSERT INTO joueur VALUES ('196', '1998-09-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Coldiron', 'James', '1978-04-24', 'Croatie', 'M');
-INSERT INTO entraineur VALUES ('197', '1997-11-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Goff', 'Brandon', '1976-04-23', 'Croatie', 'M');
+INSERT INTO entraineur VALUES ('197', '2000-05-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Berryman', 'Ronnie', '1979-11-18', 'Croatie', 'M');
-INSERT INTO collaborateur VALUES ('198', 'Medecin', '2001-12-04');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Proudfoot', 'Wesley', '1975-10-27', 'Croatie', 'M');
+INSERT INTO collaborateur VALUES ('198', 'Medecin', '1998-08-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Williams', 'Shawn', '1984-10-18', 'Croatie', 'M');
-INSERT INTO collaborateur VALUES ('199', 'Physio', '2003-05-08');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Boucher', 'Kyle', '1974-11-06', 'Croatie', 'M');
+INSERT INTO collaborateur VALUES ('199', 'Physiotherapeute', '2003-04-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Webb', 'Benjamin', '1984-11-18', 'Croatie', 'M');
-INSERT INTO arbitre VALUES ('200', '1998-03-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Murray', 'John', '1980-07-15', 'Croatie', 'M');
+INSERT INTO arbitre VALUES ('200', '2001-04-05');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Healey', 'Michael', '1974-04-21', 'Pays-Bas', 'M');
-INSERT INTO joueur VALUES ('201', '2003-09-14');
+INSERT INTO pays_enum VALUES ('Pays-Bas');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Brackman', 'Harold', '1971-04-22', 'Pays-Bas', 'M');
+INSERT INTO joueur VALUES ('201', '2001-12-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Riggan', 'Charles', '1980-12-21', 'Pays-Bas', 'M');
-INSERT INTO joueur VALUES ('202', '1997-10-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dawson', 'Charles', '1982-05-25', 'Pays-Bas', 'M');
+INSERT INTO joueur VALUES ('202', '1997-03-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Sean', '1984-03-12', 'Pays-Bas', 'M');
-INSERT INTO joueur VALUES ('203', '1997-04-22');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Obermiller', 'Stephen', '1979-06-10', 'Pays-Bas', 'M');
+INSERT INTO joueur VALUES ('203', '1997-04-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Pete', '1974-06-13', 'Pays-Bas', 'M');
-INSERT INTO joueur VALUES ('204', '1999-05-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Curi', 'Leo', '1977-06-10', 'Pays-Bas', 'M');
+INSERT INTO joueur VALUES ('204', '2000-12-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Wenger', 'Jeremy', '1976-10-18', 'Pays-Bas', 'M');
-INSERT INTO joueur VALUES ('205', '1999-08-11');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Clay', 'Bryan', '1982-11-19', 'Pays-Bas', 'M');
+INSERT INTO joueur VALUES ('205', '2000-04-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Burkette', 'Stephen', '1973-05-08', 'Pays-Bas', 'M');
-INSERT INTO joueur VALUES ('206', '2002-05-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cavazos', 'Scottie', '1978-07-13', 'Pays-Bas', 'M');
+INSERT INTO joueur VALUES ('206', '2000-08-05');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Evans', 'Ronald', '1978-07-25', 'Pays-Bas', 'M');
-INSERT INTO entraineur VALUES ('207', '1998-08-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dominguez', 'Grady', '1976-12-13', 'Pays-Bas', 'M');
+INSERT INTO entraineur VALUES ('207', '2002-10-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stone', 'Allen', '1981-11-14', 'Pays-Bas', 'M');
-INSERT INTO collaborateur VALUES ('208', 'Physio', '2003-12-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kirkpatrick', 'Ronald', '1983-09-07', 'Pays-Bas', 'M');
+INSERT INTO collaborateur VALUES ('208', 'Physiotherapeute', '2003-04-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Morgan', 'Alva', '1976-09-14', 'Pays-Bas', 'M');
-INSERT INTO collaborateur VALUES ('209', 'Psychologue sportif', '2003-07-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rodgers', 'Leslie', '1983-07-25', 'Pays-Bas', 'M');
+INSERT INTO collaborateur VALUES ('209', 'Psychologue sportif', '1997-12-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Brown', 'James', '1972-12-25', 'Pays-Bas', 'M');
-INSERT INTO arbitre VALUES ('210', '2000-05-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pruett', 'Marc', '1975-09-16', 'Pays-Bas', 'M');
+INSERT INTO arbitre VALUES ('210', '2003-05-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hooks', 'Steven', '1975-12-14', 'Coree du Sud', 'M');
-INSERT INTO joueur VALUES ('211', '1999-08-25');
+INSERT INTO pays_enum VALUES ('Coree du Sud');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dickison', 'Curt', '1978-09-20', 'Coree du Sud', 'M');
+INSERT INTO joueur VALUES ('211', '2002-09-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Chamberlin', 'Robert', '1978-12-24', 'Coree du Sud', 'M');
-INSERT INTO joueur VALUES ('212', '1997-05-13');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bello', 'Garrett', '1975-06-03', 'Coree du Sud', 'M');
+INSERT INTO joueur VALUES ('212', '2001-05-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Garcia', 'David', '1976-12-23', 'Coree du Sud', 'M');
-INSERT INTO joueur VALUES ('213', '2002-04-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Havard', 'James', '1970-05-14', 'Coree du Sud', 'M');
+INSERT INTO joueur VALUES ('213', '1997-05-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ochoa', 'Paul', '1972-08-21', 'Coree du Sud', 'M');
-INSERT INTO joueur VALUES ('214', '1999-09-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Tirado', 'Samuel', '1975-09-17', 'Coree du Sud', 'M');
+INSERT INTO joueur VALUES ('214', '2003-10-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Austin', 'Christopher', '1979-12-19', 'Coree du Sud', 'M');
-INSERT INTO joueur VALUES ('215', '2000-12-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hanley', 'Randall', '1971-11-26', 'Coree du Sud', 'M');
+INSERT INTO joueur VALUES ('215', '2000-05-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gravel', 'George', '1976-09-24', 'Coree du Sud', 'M');
-INSERT INTO joueur VALUES ('216', '2000-05-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hammett', 'Robert', '1976-08-08', 'Coree du Sud', 'M');
+INSERT INTO joueur VALUES ('216', '1998-08-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Haas', 'Antoine', '1979-10-03', 'Coree du Sud', 'M');
-INSERT INTO entraineur VALUES ('217', '1998-06-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stigall', 'Donald', '1977-11-27', 'Coree du Sud', 'M');
+INSERT INTO entraineur VALUES ('217', '1997-11-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hill', 'Gerald', '1974-05-09', 'Coree du Sud', 'M');
-INSERT INTO collaborateur VALUES ('218', 'Psychologue sportif', '2000-03-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pollock', 'Philip', '1971-05-27', 'Coree du Sud', 'M');
+INSERT INTO collaborateur VALUES ('218', 'Psychologue sportif', '1999-05-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hyldahl', 'Paul', '1979-07-16', 'Coree du Sud', 'M');
-INSERT INTO collaborateur VALUES ('219', 'Medecin', '2003-06-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Drum', 'Lee', '1977-11-14', 'Coree du Sud', 'M');
+INSERT INTO collaborateur VALUES ('219', 'Medecin', '1999-08-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Maillet', 'Cruz', '1974-06-08', 'Coree du Sud', 'M');
-INSERT INTO arbitre VALUES ('220', '2003-06-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Cameron', '1981-12-04', 'Coree du Sud', 'M');
+INSERT INTO arbitre VALUES ('220', '2002-09-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Busby', 'George', '1979-11-08', 'Japon', 'M');
-INSERT INTO joueur VALUES ('221', '1999-05-22');
+INSERT INTO pays_enum VALUES ('Japon');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kave', 'Kyle', '1974-03-23', 'Japon', 'M');
+INSERT INTO joueur VALUES ('221', '2003-07-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Poe', 'Judson', '1975-05-22', 'Japon', 'M');
-INSERT INTO joueur VALUES ('222', '1999-07-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Davis', 'Robert', '1979-06-04', 'Japon', 'M');
+INSERT INTO joueur VALUES ('222', '2003-05-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Waldorf', 'Christopher', '1972-06-18', 'Japon', 'M');
-INSERT INTO joueur VALUES ('223', '2002-07-22');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Farnell', 'Richard', '1975-11-03', 'Japon', 'M');
+INSERT INTO joueur VALUES ('223', '2000-05-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Goldman', 'Gordon', '1973-03-23', 'Japon', 'M');
-INSERT INTO joueur VALUES ('224', '1997-08-11');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Deel', 'Joseph', '1981-11-07', 'Japon', 'M');
+INSERT INTO joueur VALUES ('224', '2001-09-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dunkerson', 'Clarence', '1974-04-04', 'Japon', 'M');
-INSERT INTO joueur VALUES ('225', '1997-04-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Joesph', 'John', '1984-03-17', 'Japon', 'M');
+INSERT INTO joueur VALUES ('225', '2001-07-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Farris', 'Charles', '1974-04-12', 'Japon', 'M');
-INSERT INTO joueur VALUES ('226', '2002-07-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Anderson', 'Alan', '1973-09-24', 'Japon', 'M');
+INSERT INTO joueur VALUES ('226', '1999-04-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carter', 'Dante', '1984-09-24', 'Japon', 'M');
-INSERT INTO entraineur VALUES ('227', '2001-03-11');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Watts', 'Randy', '1970-07-19', 'Japon', 'M');
+INSERT INTO entraineur VALUES ('227', '1999-12-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Blanchard', 'Jay', '1979-04-04', 'Japon', 'M');
-INSERT INTO collaborateur VALUES ('228', 'Medecin', '2000-12-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ho', 'Mark', '1979-09-13', 'Japon', 'M');
+INSERT INTO collaborateur VALUES ('228', 'Medecin', '2003-03-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Webster', 'Elwood', '1984-12-16', 'Japon', 'M');
-INSERT INTO collaborateur VALUES ('229', 'Physio', '2003-12-22');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bonanno', 'Johnny', '1971-09-26', 'Japon', 'M');
+INSERT INTO collaborateur VALUES ('229', 'Physiotherapeute', '2002-10-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Parsons', 'Felipe', '1978-11-17', 'Japon', 'M');
-INSERT INTO arbitre VALUES ('230', '2001-04-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Riner', 'Cleveland', '1972-04-25', 'Japon', 'M');
+INSERT INTO arbitre VALUES ('230', '2003-07-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gribble', 'Hugh', '1976-11-22', 'Russie', 'M');
-INSERT INTO joueur VALUES ('231', '1999-08-08');
+INSERT INTO pays_enum VALUES ('Russie');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bradshaw', 'Graham', '1976-08-22', 'Russie', 'M');
+INSERT INTO joueur VALUES ('231', '2003-12-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Shook', 'Brett', '1983-12-21', 'Russie', 'M');
-INSERT INTO joueur VALUES ('232', '2003-03-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Castro', 'Fred', '1971-04-04', 'Russie', 'M');
+INSERT INTO joueur VALUES ('232', '1998-09-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Johnson', 'John', '1984-12-18', 'Russie', 'M');
-INSERT INTO joueur VALUES ('233', '2002-10-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lacasse', 'Long', '1977-08-21', 'Russie', 'M');
+INSERT INTO joueur VALUES ('233', '2002-03-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Winner', 'Francis', '1978-07-27', 'Russie', 'M');
-INSERT INTO joueur VALUES ('234', '1999-03-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Roe', 'Patrick', '1973-09-15', 'Russie', 'M');
+INSERT INTO joueur VALUES ('234', '2003-12-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Scates', 'Craig', '1979-11-08', 'Russie', 'M');
-INSERT INTO joueur VALUES ('235', '1999-07-26');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carter', 'Freddy', '1970-09-19', 'Russie', 'M');
+INSERT INTO joueur VALUES ('235', '1998-12-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gilbert', 'Jack', '1978-05-15', 'Russie', 'M');
-INSERT INTO joueur VALUES ('236', '2000-08-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dilley', 'Ernest', '1973-10-03', 'Russie', 'M');
+INSERT INTO joueur VALUES ('236', '1998-10-23');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Holmes', 'Derek', '1980-05-24', 'Russie', 'M');
-INSERT INTO entraineur VALUES ('237', '1998-08-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Churchwell', 'Chris', '1978-09-22', 'Russie', 'M');
+INSERT INTO entraineur VALUES ('237', '2001-09-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Warner', 'Robert', '1977-09-07', 'Russie', 'M');
-INSERT INTO collaborateur VALUES ('238', 'Physio', '1998-05-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Turberville', 'Daniel', '1977-11-11', 'Russie', 'M');
+INSERT INTO collaborateur VALUES ('238', 'Physiotherapeute', '2002-07-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kuhlman', 'Gregory', '1978-12-24', 'Russie', 'M');
-INSERT INTO collaborateur VALUES ('239', 'Psychologue sportif', '2000-03-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Edwards', 'Earl', '1979-06-17', 'Russie', 'M');
+INSERT INTO collaborateur VALUES ('239', 'Psychologue sportif', '2000-07-13');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hilton', 'Ernest', '1976-07-20', 'Russie', 'M');
-INSERT INTO arbitre VALUES ('240', '2003-07-13');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Simpson', 'Claude', '1973-08-15', 'Russie', 'M');
+INSERT INTO arbitre VALUES ('240', '2003-11-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lacy', 'Robert', '1978-10-04', 'Maroque', 'M');
-INSERT INTO joueur VALUES ('241', '2000-11-11');
+INSERT INTO pays_enum VALUES ('Maroque');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mendoza', 'William', '1983-11-07', 'Maroque', 'M');
+INSERT INTO joueur VALUES ('241', '1997-05-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sanders', 'Keith', '1982-11-18', 'Maroque', 'M');
-INSERT INTO joueur VALUES ('242', '2001-07-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gross', 'Steven', '1974-08-08', 'Maroque', 'M');
+INSERT INTO joueur VALUES ('242', '1998-09-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Richmon', 'Jason', '1984-06-20', 'Maroque', 'M');
-INSERT INTO joueur VALUES ('243', '1998-03-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Green', 'Martin', '1977-11-03', 'Maroque', 'M');
+INSERT INTO joueur VALUES ('243', '1997-08-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Shoemake', 'John', '1976-03-24', 'Maroque', 'M');
-INSERT INTO joueur VALUES ('244', '1999-12-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Simmons', 'Zachary', '1981-08-22', 'Maroque', 'M');
+INSERT INTO joueur VALUES ('244', '2001-12-18');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Abram', 'John', '1981-08-07', 'Maroque', 'M');
-INSERT INTO joueur VALUES ('245', '1999-07-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Harper', 'Joe', '1973-09-09', 'Maroque', 'M');
+INSERT INTO joueur VALUES ('245', '2000-06-05');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Minge', 'Marvin', '1974-05-26', 'Maroque', 'M');
-INSERT INTO joueur VALUES ('246', '2002-11-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Johnson', 'Daniel', '1975-11-12', 'Maroque', 'M');
+INSERT INTO joueur VALUES ('246', '2002-10-14');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Manahan', 'Jamie', '1984-03-22', 'Egypt', 'M');
-INSERT INTO entraineur VALUES ('247', '2002-06-09');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cox', 'Charles', '1983-03-04', 'Maroque', 'M');
+INSERT INTO entraineur VALUES ('247', '1998-11-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cope', 'Genaro', '1983-10-28', 'Maroque', 'M');
-INSERT INTO collaborateur VALUES ('248', 'Psychologue sportif', '1998-08-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Obleton', 'Joseph', '1978-12-04', 'Maroque', 'M');
+INSERT INTO collaborateur VALUES ('248', 'Psychologue sportif', '2000-09-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Morgan', 'Raymond', '1977-05-22', 'Maroque', 'M');
-INSERT INTO collaborateur VALUES ('249', 'Medecin', '1997-05-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Russell', 'Hector', '1970-08-15', 'Maroque', 'M');
+INSERT INTO collaborateur VALUES ('249', 'Medecin', '1998-04-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bosch', 'Dwayne', '1971-08-10', 'Maroque', 'M');
-INSERT INTO arbitre VALUES ('250', '2002-03-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Eusebio', 'James', '1984-12-13', 'Maroque', 'M');
+INSERT INTO arbitre VALUES ('250', '2001-05-17');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Fisch', 'Larry', '1975-07-06', 'Egypt', 'M');
-INSERT INTO joueur VALUES ('251', '1997-09-22');
+INSERT INTO pays_enum VALUES ('Egypt');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bailey', 'Pete', '1970-09-11', 'Egypt', 'M');
+INSERT INTO joueur VALUES ('251', '1998-06-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Wood', 'William', '1971-12-14', 'Egypt', 'M');
-INSERT INTO joueur VALUES ('252', '1999-09-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mierzejewski', 'Christopher', '1976-06-26', 'Egypt', 'M');
+INSERT INTO joueur VALUES ('252', '2002-04-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Smith', 'Charles', '1982-07-18', 'Egypt', 'M');
-INSERT INTO joueur VALUES ('253', '1999-03-17');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Young', 'Louis', '1979-06-10', 'Egypt', 'M');
+INSERT INTO joueur VALUES ('253', '2003-06-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mendez', 'Thomas', '1971-03-28', 'Egypt', 'M');
-INSERT INTO joueur VALUES ('254', '2000-08-15');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mccullar', 'Gordon', '1978-05-16', 'Egypt', 'M');
+INSERT INTO joueur VALUES ('254', '2001-12-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Phelps', 'Alexander', '1974-09-08', 'Egypt', 'M');
-INSERT INTO joueur VALUES ('255', '1999-03-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Douglas', 'Jonathan', '1973-06-09', 'Egypt', 'M');
+INSERT INTO joueur VALUES ('255', '1997-05-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Farley', 'Marco', '1972-10-09', 'Egypt', 'M');
-INSERT INTO joueur VALUES ('256', '2003-06-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Penley', 'Robert', '1974-05-23', 'Egypt', 'M');
+INSERT INTO joueur VALUES ('256', '2001-10-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Solomon', 'Jeffrey', '1974-11-06', 'Egypt', 'M');
-INSERT INTO entraineur VALUES ('257', '1999-11-22');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Morgan', 'Saul', '1981-05-28', 'Egypt', 'M');
+INSERT INTO entraineur VALUES ('257', '1998-04-15');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kwan', 'Charles', '1970-04-12', 'Egypt', 'M');
-INSERT INTO collaborateur VALUES ('258', 'Medecin', '2002-07-12');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Berganza', 'Ralph', '1970-08-20', 'Egypt', 'M');
+INSERT INTO collaborateur VALUES ('258', 'Medecin', '2000-06-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Allen', 'Jordan', '1975-06-17', 'Egypt', 'M');
-INSERT INTO collaborateur VALUES ('259', 'Physio', '2000-10-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stidham', 'Kevin', '1981-10-18', 'Egypt', 'M');
+INSERT INTO collaborateur VALUES ('259', 'Physiotherapeute', '2002-06-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lynch', 'Michael', '1971-09-06', 'Egypt', 'M');
-INSERT INTO arbitre VALUES ('260', '1998-03-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hay', 'Eric', '1975-05-10', 'Egypt', 'M');
+INSERT INTO arbitre VALUES ('260', '1999-04-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lacombe', 'James', '1973-10-14', 'Grece', 'M');
-INSERT INTO joueur VALUES ('261', '2003-12-25');
+INSERT INTO pays_enum VALUES ('Grece');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dunlap', 'Aaron', '1979-11-23', 'Grece', 'M');
+INSERT INTO joueur VALUES ('261', '2000-09-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Orozco', 'Andrew', '1979-08-06', 'Grece', 'M');
-INSERT INTO joueur VALUES ('262', '2003-04-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mason', 'Robert', '1973-08-25', 'Grece', 'M');
+INSERT INTO joueur VALUES ('262', '1999-11-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Harper', 'Charles', '1983-04-08', 'Grece', 'M');
-INSERT INTO joueur VALUES ('263', '2002-06-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Patel', 'Richard', '1976-11-09', 'Grece', 'M');
+INSERT INTO joueur VALUES ('263', '2000-08-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Few', 'Terry', '1970-05-10', 'Grece', 'M');
-INSERT INTO joueur VALUES ('264', '2000-05-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Owens', 'Darrin', '1973-12-19', 'Grece', 'M');
+INSERT INTO joueur VALUES ('264', '2003-12-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Fee', 'Jacob', '1982-05-16', 'Grece', 'M');
-INSERT INTO joueur VALUES ('265', '2003-04-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sparks', 'Clifford', '1976-09-21', 'Grece', 'M');
+INSERT INTO joueur VALUES ('265', '1998-07-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ison', 'William', '1977-05-04', 'Grece', 'M');
-INSERT INTO joueur VALUES ('266', '2002-03-10');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Biasi', 'Stanley', '1980-07-23', 'Grece', 'M');
+INSERT INTO joueur VALUES ('266', '2001-07-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gurney', 'Thomas', '1977-10-12', 'Grece', 'M');
-INSERT INTO entraineur VALUES ('267', '2001-07-04');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Winnie', 'Donald', '1984-10-16', 'Grece', 'M');
+INSERT INTO entraineur VALUES ('267', '2002-04-27');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Carroll', 'Pedro', '1980-11-04', 'Grece', 'M');
-INSERT INTO collaborateur VALUES ('268', 'Physio', '2001-11-16');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Berglund', 'Oliver', '1979-07-13', 'Grece', 'M');
+INSERT INTO collaborateur VALUES ('268', 'Physiotherapeute', '2000-12-24');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Culhane', 'Brian', '1976-04-28', 'Grece', 'M');
-INSERT INTO collaborateur VALUES ('269', 'Psychologue sportif', '1998-04-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Steinke', 'Kyle', '1984-11-25', 'Grece', 'M');
+INSERT INTO collaborateur VALUES ('269', 'Psychologue sportif', '2001-12-26');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Gonzalez', 'Joe', '1973-05-25', 'Grece', 'M');
-INSERT INTO arbitre VALUES ('270', '1997-10-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Coughlin', 'Howard', '1978-03-19', 'Grece', 'M');
+INSERT INTO arbitre VALUES ('270', '1997-11-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bowen', 'Michael', '1974-09-04', 'Qatar', 'M');
-INSERT INTO joueur VALUES ('271', '1997-12-17');
+INSERT INTO pays_enum VALUES ('Qatar');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hiser', 'David', '1980-08-14', 'Qatar', 'M');
+INSERT INTO joueur VALUES ('271', '2001-11-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Dewinter', 'James', '1973-10-10', 'Qatar', 'M');
-INSERT INTO joueur VALUES ('272', '2002-04-18');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Decastro', 'Robert', '1979-03-26', 'Qatar', 'M');
+INSERT INTO joueur VALUES ('272', '1998-07-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Thompson', 'Chris', '1982-10-19', 'Qatar', 'M');
-INSERT INTO joueur VALUES ('273', '1999-12-13');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('West', 'Aaron', '1984-03-21', 'Qatar', 'M');
+INSERT INTO joueur VALUES ('273', '1999-08-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Proctor', 'Travis', '1979-08-24', 'Qatar', 'M');
-INSERT INTO joueur VALUES ('274', '2000-11-19');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Pitcherello', 'Martin', '1971-07-09', 'Qatar', 'M');
+INSERT INTO joueur VALUES ('274', '1999-11-28');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Quezad', 'Michael', '1981-09-11', 'Qatar', 'M');
-INSERT INTO joueur VALUES ('275', '2001-05-14');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Smith', 'John', '1977-05-28', 'Qatar', 'M');
+INSERT INTO joueur VALUES ('275', '1998-07-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Johns', 'Paul', '1979-05-08', 'Qatar', 'M');
-INSERT INTO joueur VALUES ('276', '2001-04-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Vanderhorst', 'Richard', '1984-08-26', 'Qatar', 'M');
+INSERT INTO joueur VALUES ('276', '1997-03-09');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hill', 'Curtis', '1982-10-05', 'Qatar', 'M');
-INSERT INTO entraineur VALUES ('277', '1998-03-07');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Taylor', 'Michael', '1978-10-14', 'Qatar', 'M');
+INSERT INTO entraineur VALUES ('277', '2002-12-06');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Latch', 'Eric', '1984-04-06', 'Qatar', 'M');
-INSERT INTO collaborateur VALUES ('278', 'Psychologue sportif', '2003-12-21');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bullard', 'Joe', '1975-06-06', 'Qatar', 'M');
+INSERT INTO collaborateur VALUES ('278', 'Psychologue sportif', '2002-10-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Polk', 'Gene', '1980-10-14', 'Qatar', 'M');
-INSERT INTO collaborateur VALUES ('279', 'Medecin', '1998-04-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Morales', 'Richard', '1977-05-08', 'Qatar', 'M');
+INSERT INTO collaborateur VALUES ('279', 'Medecin', '1998-11-22');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rice', 'Bobby', '1982-09-27', 'Qatar', 'M');
-INSERT INTO arbitre VALUES ('280', '1998-07-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cendejas', 'Mark', '1972-07-18', 'Qatar', 'M');
+INSERT INTO arbitre VALUES ('280', '2001-07-12');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Crumley', 'William', '1981-10-28', 'Etats-Unis', 'M');
-INSERT INTO joueur VALUES ('281', '1998-12-25');
+INSERT INTO pays_enum VALUES ('Etats-Unis');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Nelson', 'Caleb', '1972-03-16', 'Etats-Unis', 'M');
+INSERT INTO joueur VALUES ('281', '2000-08-19');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Angel', 'Mike', '1976-08-23', 'Etats-Unis', 'M');
-INSERT INTO joueur VALUES ('282', '1999-12-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Buchanan', 'Leo', '1984-11-05', 'Etats-Unis', 'M');
+INSERT INTO joueur VALUES ('282', '1999-09-03');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Webb', 'Kenneth', '1980-11-21', 'Etats-Unis', 'M');
-INSERT INTO joueur VALUES ('283', '2003-04-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Lee', 'Robert', '1971-03-25', 'Etats-Unis', 'M');
+INSERT INTO joueur VALUES ('283', '2000-07-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Frick', 'Ronald', '1971-03-19', 'Etats-Unis', 'M');
-INSERT INTO joueur VALUES ('284', '2002-03-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Teasley', 'Steven', '1972-11-21', 'Etats-Unis', 'M');
+INSERT INTO joueur VALUES ('284', '1999-12-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Harding', 'Alexander', '1977-12-14', 'Etats-Unis', 'M');
-INSERT INTO joueur VALUES ('285', '1999-03-27');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hernandez', 'Patrick', '1970-06-16', 'Etats-Unis', 'M');
+INSERT INTO joueur VALUES ('285', '2002-03-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Harrington', 'William', '1971-06-16', 'Etats-Unis', 'M');
-INSERT INTO joueur VALUES ('286', '1999-08-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Hoskins', 'David', '1976-09-04', 'Etats-Unis', 'M');
+INSERT INTO joueur VALUES ('286', '2003-05-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stokes', 'Jack', '1982-06-24', 'France', 'M');
-INSERT INTO entraineur VALUES ('287', '2002-09-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Purifoy', 'Rodney', '1983-08-06', 'Etats-Unis', 'M');
+INSERT INTO entraineur VALUES ('287', '1997-04-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Reyes', 'Christopher', '1975-05-05', 'Etats-Unis', 'M');
-INSERT INTO collaborateur VALUES ('288', 'Medecin', '2000-03-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Shaw', 'William', '1979-07-28', 'Etats-Unis', 'M');
+INSERT INTO collaborateur VALUES ('288', 'Medecin', '2003-08-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Larsen', 'Preston', '1970-06-19', 'Etats-Unis', 'M');
-INSERT INTO collaborateur VALUES ('289', 'Physio', '1999-03-25');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stallard', 'Neville', '1971-11-12', 'Etats-Unis', 'M');
+INSERT INTO collaborateur VALUES ('289', 'Physiotherapeute', '2003-09-10');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Covey', 'Jimmy', '1977-06-08', 'Etats-Unis', 'M');
-INSERT INTO arbitre VALUES ('290', '1997-09-20');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Ayers', 'Victor', '1980-06-11', 'Etats-Unis', 'M');
+INSERT INTO arbitre VALUES ('290', '2000-10-20');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Stratton', 'Erich', '1974-11-09', 'Turquie', 'M');
-INSERT INTO joueur VALUES ('291', '2001-08-11');
+INSERT INTO pays_enum VALUES ('Turquie');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Schumacher', 'Paul', '1974-10-09', 'Turquie', 'M');
+INSERT INTO joueur VALUES ('291', '2001-05-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Chavarria', 'Harry', '1971-12-21', 'Turquie', 'M');
-INSERT INTO joueur VALUES ('292', '1999-03-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Privett', 'Marc', '1975-07-23', 'Turquie', 'M');
+INSERT INTO joueur VALUES ('292', '2001-04-25');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'Raymond', '1978-07-03', 'Turquie', 'M');
-INSERT INTO joueur VALUES ('293', '1998-06-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Sisk', 'David', '1981-11-21', 'Turquie', 'M');
+INSERT INTO joueur VALUES ('293', '2001-12-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Torres', 'James', '1971-07-26', 'Turquie', 'M');
-INSERT INTO joueur VALUES ('294', '2000-07-04');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Church', 'Frank', '1974-10-03', 'Turquie', 'M');
+INSERT INTO joueur VALUES ('294', '1998-04-04');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Tate', 'Adam', '1975-12-10', 'Turquie', 'M');
-INSERT INTO joueur VALUES ('295', '2001-11-08');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Owens', 'Asa', '1983-08-24', 'Turquie', 'M');
+INSERT INTO joueur VALUES ('295', '2002-11-21');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Markel', 'Scott', '1972-10-11', 'Turquie', 'M');
-INSERT INTO joueur VALUES ('296', '2003-06-28');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Cox', 'Ronald', '1980-11-09', 'Turquie', 'M');
+INSERT INTO joueur VALUES ('296', '2002-06-11');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Mccollough', 'Charles', '1976-11-08', 'Qatar', 'M');
-INSERT INTO entraineur VALUES ('297', '2003-12-23');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Jones', 'David', '1977-04-12', 'Turquie', 'M');
+INSERT INTO entraineur VALUES ('297', '2003-11-08');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Panning', 'Gary', '1982-03-05', 'Turquie', 'M');
-INSERT INTO collaborateur VALUES ('298', 'Physio', '1998-04-06');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Bouldin', 'Raymond', '1971-04-19', 'Turquie', 'M');
+INSERT INTO collaborateur VALUES ('298', 'Physiotherapeute', '1997-03-16');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Rufenacht', 'Steven', '1980-08-10', 'Turquie', 'M');
-INSERT INTO collaborateur VALUES ('299', 'Psychologue sportif', '2003-05-03');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Macias', 'David', '1982-04-27', 'Turquie', 'M');
+INSERT INTO collaborateur VALUES ('299', 'Psychologue sportif', '1997-10-07');
 
-INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Leber', 'James', '1980-04-07', 'Turquie', 'M');
-INSERT INTO arbitre VALUES ('300', '1997-09-24');
+INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kaylor', 'Tom', '1972-12-20', 'Turquie', 'M');
+INSERT INTO arbitre VALUES ('300', '1999-04-13');
 
 commit;
