@@ -1,5 +1,3 @@
-package projet;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
@@ -17,10 +15,8 @@ public class Controller {
     public void question1() {
         textAnswer.clear();
         textAnswer.appendText("Réponse à la question 1\n");
+        db.getConnection();
 
-        if(db.getConnection() != null)
-            textAnswer.appendText("le nombre des acteurs : "+db.getActorNbr() + "\n");
-        textAnswer.appendText("_______________________________________\n");
         Vector<Vector> vect = db.getActors();
 
         for(Vector x : vect) {
@@ -29,20 +25,25 @@ public class Controller {
                 else textAnswer.appendText(x.get(i)+", ");
         }
 
-
-
-        textAnswer.appendText("_______________________________________\n");
-
-        for(int i=1;i <10;i++) {
-            Vector<String> v = db.getFullName(i);
-            textAnswer.appendText(v.get(0)+" = "+v.get(1));
-
-        }
     }
 
     @FXML
     public void question2() {
-        textAnswer.setText("Réponse à la question 2");
+        textAnswer.clear();
+        textAnswer.appendText("Réponse à la question 2\n");
+        Hibernate hib = new Hibernate();
+        Vector<String> result;
+        try {
+            hib.setUp();
+            result = hib.getActorNames();
+            for (String s : result) {
+                textAnswer.appendText(s + "\n");
+            }
+            hib.tearDown();
+        }
+            catch (Exception e)  {
+            System.out.println("Erreur : " + e);
+            }
     }
 
     @FXML
