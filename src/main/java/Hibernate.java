@@ -31,6 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
 
 /**
  * Illustrates the use of Hibernate native APIs.  The code here is unchanged from the {@code basic} example, the
@@ -43,16 +44,26 @@ public class Hibernate {
 
     protected void setUp() throws Exception {
         // A SessionFactory is set up once for an application!
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure() // configures settings from hibernate.cfg.xml
-                .build();
+
+        Configuration config = new Configuration();
+        config.setProperty("hibernate.connection.driver_class","org.postgresql.Driver");
+        config.setProperty("hibernate.connection.url","jdbc:postgresql://localhost:5433/dvdrental");
+        config.setProperty("hibernate.connection.username","postgres");
+        config.setProperty("hibernate.connection.password","postgres");
+        config.setProperty("hibernate.dialect","org.hibernate.dialect.PostgreSQL82Dialect");
+        config.setProperty("show_sql","true");
+        config.addAnnotatedClass(Actor.class);
+
+        //final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+        //        .configure() // configures settings from hibernate.cfg.xml
+        //        .build();
         try {
-            sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+            sessionFactory = config.buildSessionFactory();
         }
         catch (Exception e) {
             // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
             // so destroy it manually.
-            StandardServiceRegistryBuilder.destroy( registry );
+            //StandardServiceRegistryBuilder.destroy( registry );
         }
     }
 
