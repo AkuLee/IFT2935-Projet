@@ -7,3 +7,4 @@ CREATE DATABASE projet_foot;
 \i coupe.sql
 \i alter.sql
 \i triggers.sql
+\i views.sql

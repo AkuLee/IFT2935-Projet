@@ -1,19 +1,19 @@
 begin;
 UPDATE personne 
 SET pays_natal = 'Canada'
-WHERE personne_id = 10;
+WHERE personne_id = 7;
 
 UPDATE personne 
 SET pays_natal = 'Uruguay'
-WHERE personne_id = 50;
+WHERE personne_id = 47;
 
 UPDATE personne 
 SET pays_natal = 'Portugal'
-WHERE personne_id = 90 AND personne_id = 150;
+WHERE personne_id = 97 AND personne_id = 157;
 
 UPDATE personne 
 SET pays_natal = 'Japon'
-WHERE personne_id = 30;
+WHERE personne_id = 37;
 
 UPDATE equipe_foot
 SET placement  = 1

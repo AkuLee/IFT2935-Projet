@@ -1,7 +1,7 @@
 WITH 
 	finals AS (SELECT date, nation1, nation2 
 		FROM Match_Foot 
-		WHERE rang = 'Final'),
+		WHERE rang = 'Finale'),
 	sanction1 AS (SELECT sanction_id, arbitre_id, match_date, nation_equipe_1, 
 		nation_equipe_2 
 		FROM Sanction),
