@@ -2,62 +2,92 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 
-import java.util.Vector;
+
+import java.util.List;
 
 public class Controller {
 
-    private JDBC db = JDBC.getInstance();
+    Hibernate hib = Hibernate.getInstance();
 
     @FXML
     private TextArea textAnswer;
 
     @FXML
     public void question1() {
+
         textAnswer.clear();
-        textAnswer.appendText("Réponse à la question 1\n");
-        db.getConnection();
-
-        Vector<Vector> vect = db.getActors();
-
-        for(Vector x : vect) {
-            for(int i=0; i<x.size(); i++)
-                if(i==x.size()-1) textAnswer.appendText(x.get(i)+";\n");
-                else textAnswer.appendText(x.get(i)+", ");
+        textAnswer.appendText("Question 1\n\nDonner le nom et le prénom de l\'arbitre qui a donné " +
+                "le plus de sanctions pendant les \nmatchs de finale\n\n" +
+                "Réponse\n\n");
+        List<Personne> result;
+        try {
+            result = hib.question1();
+            for (Personne p : result) {
+                textAnswer.appendText(p.getNom() + ", " + p.getPrenom() + "\n");
+            }
         }
-
+        catch (Exception e)  {
+            System.out.println("Erreur : " + e);
+        }
     }
 
     @FXML
     public void question2() {
         textAnswer.clear();
-        textAnswer.appendText("Réponse à la question 2\n");
-        Hibernate hib = new Hibernate();
-        Vector<String> result;
+        textAnswer.appendText("Question 2\n\nPlacer les nations en ordre décroissant " +
+                "du nombre de coupes du monde gagnées\n\n" +
+                "Réponse\n\n");
+        List<PaysCoupesGagneesView> result;
         try {
-            hib.setUp();
-            result = hib.getActorNames();
-            for (String s : result) {
-                textAnswer.appendText(s + "\n");
+            result = hib.question2();
+            for (PaysCoupesGagneesView p : result) {
+                textAnswer.appendText(p.getNation() + " : " + p.getNbCoupesGagnees() + "\n");
             }
-            hib.tearDown();
         }
-            catch (Exception e)  {
+        catch (Exception e)  {
             System.out.println("Erreur : " + e);
-            }
+        }
     }
 
     @FXML
     public void question3() {
-        textAnswer.setText("Réponse à la question 3");
+        textAnswer.clear();
+        textAnswer.appendText("Question 3\n\nDonner le nom et prénom des entraîneurs " +
+                        "qui entraînaient une équipe d’une nation \nautre que son pays natal.\n\n" +
+                "Réponse\n\n");
+        List<Personne> result;
+        try {
+            result = hib.question3();
+            for (Personne p : result) {
+                textAnswer.appendText(p.getNom() + ", " + p.getPrenom() + "\n");
+            }
+        }
+        catch (Exception e)  {
+            System.out.println("Erreur : " + e);
+        }
     }
 
     @FXML
     public void question4() {
-        textAnswer.setText("Réponse à la question 4");
+        textAnswer.clear();
+        textAnswer.appendText("Question 4\n\nCombien de sanctions ont été données par des arbitres assistants et "
+                + " par des \nsarbitres principaux ?\n\n" +
+                "Réponse\n\n");
+        List<TypeArbitreSanctionsView> result;
+        try {
+            result = hib.question4();
+            for (TypeArbitreSanctionsView p : result) {
+                textAnswer.appendText(p.getTypeArbitre() + " : " + p.getNbSanctions() + "\n");
+            }
+        }
+        catch (Exception e)  {
+            System.out.println("Erreur : " + e);
+        }
     }
 
     @FXML
     public void quit() {
+        Hibernate.getInstance().destroy();
         System.exit(0);
     }
 
@@ -72,7 +102,7 @@ public class Controller {
         alert.setTitle("À propos");
         alert.setHeaderText("Projet du cours IFT2035 Hiver 2021");
         String content ="Ce projet a été remis par :\n" +
-                "Tina Liu Lee ()\n" +
+                "Tina Liu Lee (20092684)\n" +
                 "Bojan Odobasic (952514)\n" +
                 "Jean-Marc Prud\'homme (20137035)\n" +
                 "Jean-Daniel Toupin ()\n";
