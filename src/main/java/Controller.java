@@ -105,7 +105,7 @@ public class Controller {
                 "Tina Liu Lee (20092684)\n" +
                 "Bojan Odobasic (952514)\n" +
                 "Jean-Marc Prud\'homme (20137035)\n" +
-                "Jean-Daniel Toupin ()\n";
+                "Jean-Daniel Toupin (20046724)\n";
         alert.setContentText(content);
         alert.show();
     }
