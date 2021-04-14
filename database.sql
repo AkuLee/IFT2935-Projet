@@ -1,9 +1,12 @@
 begin;
 
+<<<<<<< HEAD
 -- DROP SCHEMA IF EXISTS public CASCADE;
 -- create schema public;
 -- set search_path to public;
 
+=======
+>>>>>>> 885de2df551fec9d2e2cbe316af08ba67d152368
 CREATE TABLE Coupe_Du_Monde (
     edition int4 UNIQUE NOT NULL,
     date_debut date NOT NULL,
