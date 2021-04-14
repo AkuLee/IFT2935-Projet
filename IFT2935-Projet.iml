@@ -5,9 +5,7 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
-        <datasource-mapping>
-          <factory-entry name="IFT2935-Projet" />
-        </datasource-mapping>
+        <datasource-mapping />
         <naming-strategy-map />
       </configuration>
     </facet>
@@ -23,16 +21,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/postgresql-42.2.19.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:16" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:16" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:16" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:16" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:16" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:16" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:16" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:mac:16" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-core:5.4.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.3.2.Final" level="project" />
     <orderEntry type="library" name="Maven: javax.persistence:javax.persistence-api:2.2" level="project" />
