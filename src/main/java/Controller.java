@@ -16,8 +16,8 @@ public class Controller {
     public void question1() {
 
         textAnswer.clear();
-        textAnswer.appendText("Question 1\n\nDonner le nom et le prénom de l\'arbitre qui a donné " +
-                "le plus de sanctions pendant les \nmatchs de finale\n\n" +
+        textAnswer.appendText("Question 1\n\nDonner le nom et le prénom de l\'arbitre qui a donné le plus de \n" +
+                        "sanctions pendant les matchs de finale.\n\n" +
                 "Réponse\n\n");
         List<Personne> result;
         try {
@@ -34,8 +34,8 @@ public class Controller {
     @FXML
     public void question2() {
         textAnswer.clear();
-        textAnswer.appendText("Question 2\n\nPlacer les nations en ordre décroissant " +
-                "du nombre de coupes du monde gagnées\n\n" +
+        textAnswer.appendText("Question 2\n\nPlacer les nations en ordre décroissant du nombre de coupes \n" +
+                "du monde gagnées.\n\n" +
                 "Réponse\n\n");
         List<PaysCoupesGagneesView> result;
         try {
@@ -52,8 +52,8 @@ public class Controller {
     @FXML
     public void question3() {
         textAnswer.clear();
-        textAnswer.appendText("Question 3\n\nDonner le nom et prénom des entraîneurs " +
-                        "qui entraînaient une équipe d’une nation \nautre que son pays natal.\n\n" +
+        textAnswer.appendText("Question 3\n\nDonner le nom et prénom des entraîneurs qui entraînaient \n" +
+               "une équipe d’une nation autre que son pays natal.\n\n" +
                 "Réponse\n\n");
         List<Personne> result;
         try {
@@ -70,8 +70,8 @@ public class Controller {
     @FXML
     public void question4() {
         textAnswer.clear();
-        textAnswer.appendText("Question 4\n\nCombien de sanctions ont été données par des arbitres assistants et "
-                + " par des \narbitres principaux ?\n\n" +
+        textAnswer.appendText("Question 4\n\nCombien de sanctions ont été données par des arbitres assistants \n"
+                + "et par des arbitres principaux ?\n\n" +
                 "Réponse\n\n");
         List<TypeArbitreSanctionsView> result;
         try {
