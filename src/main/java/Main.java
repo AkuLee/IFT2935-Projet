@@ -43,7 +43,7 @@ public class Main extends Application {
         grid.setPadding(new Insets(10, 10, 10, 10));
 
         TextField url = new TextField();
-        url.setText("jdbc:postgresql://localhost:5433/projet_foot");
+        url.setText("jdbc:postgresql://localhost:5432/projet_foot");
         url.setMinWidth(300);
         TextField username = new TextField();
         username.setText("postgres");

@@ -71,7 +71,7 @@ public class Controller {
     public void question4() {
         textAnswer.clear();
         textAnswer.appendText("Question 4\n\nCombien de sanctions ont été données par des arbitres assistants et "
-                + " par des \nsarbitres principaux ?\n\n" +
+                + " par des \narbitres principaux ?\n\n" +
                 "Réponse\n\n");
         List<TypeArbitreSanctionsView> result;
         try {
