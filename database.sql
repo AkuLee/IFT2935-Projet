@@ -1,8 +1,8 @@
 begin;
 
-DROP SCHEMA IF EXISTS database CASCADE;
-create schema database;
-set search_path to database;
+-- DROP SCHEMA IF EXISTS public CASCADE;
+-- create schema public;
+-- set search_path to public;
 
 CREATE TABLE Coupe_Du_Monde (
     edition int4 UNIQUE NOT NULL,
