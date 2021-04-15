@@ -1,8 +1,10 @@
--- Load the full database one shot
 CREATE DATABASE projet_foot;
 \c projet_foot
 
 begin;
+
+-- Déclaration des tables et des contraintes
+
 CREATE TABLE Coupe_Du_Monde (
     edition int4 UNIQUE NOT NULL,
     date_debut date NOT NULL,
@@ -135,6 +137,21 @@ ALTER TABLE Joueur_equipe
         FOREIGN KEY (equipe_ligue_professionnelle)
             REFERENCES equipes_pro_enum (equipe);
 
+-- Fonction qui retourne les informations détaillées des joueurs
+-- d'une équipe donnée
+
+CREATE OR REPLACE FUNCTION team_players(ed_arg int, nation_arg text)
+    RETURNS TABLE (Prenom varchar(255), Nom varchar(255), Dossard INT, Position_ varchar(255),
+                   Equipe_Professionnelle text, Joueur_depuis text, Date_de_Naissance text)
+
+AS
+$$
+select p.prenom, p.nom, eq.numero_dossard, eq.position,
+       eq.equipe_ligue_professionnelle, j.joueur_depuis, p.ddn
+FROM joueur_equipe AS eq JOIN joueur AS j ON joueur_id = personne_id NATURAL JOIN personne p
+WHERE eq.nation = nation_arg AND eq.edition_coupe = ed_arg;
+$$ LANGUAGE SQL;
+
 CREATE TABLE Collaborateur (
     personne_id int4 NOT NULL,
     expertise varchar(255) NOT NULL,
@@ -164,8 +181,6 @@ ALTER TABLE collaborateur_equipe
     ADD CONSTRAINT fk_collaborateur_equipe_equipe
         FOREIGN KEY (nation, edition_coupe)
             REFERENCES Equipe_Foot (nation, edition_coupe);
-
-
 
 CREATE TABLE Match_Foot (
     date date NOT NULL,
@@ -203,6 +218,8 @@ ALTER TABLE Match_Foot
         FOREIGN KEY (nation2, edition_coupe)
             REFERENCES Equipe_Foot (nation, edition_coupe);
 
+-- Fonction qui vérifie qu'une date donnée correspond à une édition donnée
+
 CREATE OR REPLACE FUNCTION check_date_edition() RETURNS trigger AS
 $BODY$
 declare
@@ -227,6 +244,32 @@ $BODY$ language plpgsql;
 CREATE TRIGGER match_insert BEFORE INSERT ON match_foot
     FOR EACH ROW
 EXECUTE PROCEDURE check_date_edition();
+
+-- Fonction qui vérifie qu'il n'existe pas déjà un match entre
+-- deux nations à une date donnée 
+-- (vérifie les permutations de nation1 et nation2)
+
+CREATE OR REPLACE FUNCTION nation_order_trigger()
+    RETURNS TRIGGER AS
+$$
+declare
+    new_team_order record;
+BEGIN
+    SELECT date, nation1, nation2 INTO new_team_order
+    FROM match_foot WHERE (date = NEW.date AND nation2 = NEW.nation1 AND nation1 = NEW.nation2);
+
+    IF new_team_order IS NOT NULL THEN
+        RAISE exception 'Erreur: ce match existe deja dans la coupe';
+    END IF;
+
+    RETURN NEW;
+
+END;
+$$ language plpgsql;
+
+CREATE TRIGGER match_order_insert BEFORE INSERT ON match_foot
+    FOR EACH ROW
+EXECUTE PROCEDURE nation_order_trigger();
 
 CREATE TABLE Arbitre (
     personne_id int4 NOT NULL,
@@ -283,9 +326,9 @@ ALTER TABLE Sanction
         FOREIGN KEY (match_date, nation_equipe_1, nation_equipe_2)
             REFERENCES Match_Foot (date, nation1, nation2);
 
-commit;
+-- Début des insertions
 
-begin;
+-- Personnes
 
 INSERT INTO equipes_pro_enum VALUES ('FC Bayern');
 INSERT INTO equipes_pro_enum VALUES ('Olympique Lyonnais');
@@ -1229,16 +1272,12 @@ INSERT INTO collaborateur VALUES ('299', 'Psychologue sportif', '1997-10-07');
 INSERT INTO personne (nom, prenom, ddn, pays_natal, sexe) VALUES ('Kaylor', 'Tom', '1972-12-20', 'Turquie', 'M');
 INSERT INTO arbitre VALUES ('300', '1999-04-13');
 
-commit;
+-- Coupe Du Monde
 
-begin; 
-
-  -- Coupe Du Monde  --- 
 INSERT INTO coupe_du_monde VALUES ('1', '1998-06-10', '1998-07-12');
 INSERT INTO pays_coupe VALUES ('Uruguay', '1');
 
-
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Uruguay', '1', '7', '12');
 INSERT INTO collaborateur_equipe VALUES ('8', 'Uruguay', '1');
@@ -1250,7 +1289,7 @@ INSERT INTO joueur_equipe VALUES ('4', 'Uruguay', '1', 'Millieu offensif', '27',
 INSERT INTO joueur_equipe VALUES ('5', 'Uruguay', '1', 'Gardien de but', '28', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('6', 'Uruguay', '1', 'Attaquant de pointe', '38', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Italie', '1', '17', '26');
 INSERT INTO collaborateur_equipe VALUES ('18', 'Italie', '1');
@@ -1262,7 +1301,7 @@ INSERT INTO joueur_equipe VALUES ('14', 'Italie', '1', 'Millieu offensif', '27',
 INSERT INTO joueur_equipe VALUES ('15', 'Italie', '1', 'Gardien de but', '25', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('16', 'Italie', '1', 'Attaquant de pointe', '38', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('France', '1', '27', '10');
 INSERT INTO collaborateur_equipe VALUES ('28', 'France', '1');
@@ -1274,7 +1313,7 @@ INSERT INTO joueur_equipe VALUES ('24', 'France', '1', 'Millieu offensif', '25',
 INSERT INTO joueur_equipe VALUES ('25', 'France', '1', 'Gardien de but', '34', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('26', 'France', '1', 'Attaquant de pointe', '45', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Canada', '1', '37', '5');
 INSERT INTO collaborateur_equipe VALUES ('38', 'Canada', '1');
@@ -1286,7 +1325,7 @@ INSERT INTO joueur_equipe VALUES ('34', 'Canada', '1', 'Millieu offensif', '20',
 INSERT INTO joueur_equipe VALUES ('35', 'Canada', '1', 'Gardien de but', '32', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('36', 'Canada', '1', 'Attaquant de pointe', '36', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Bresil', '1', '47', '21');
 INSERT INTO collaborateur_equipe VALUES ('48', 'Bresil', '1');
@@ -1298,7 +1337,7 @@ INSERT INTO joueur_equipe VALUES ('44', 'Bresil', '1', 'Millieu offensif', '23',
 INSERT INTO joueur_equipe VALUES ('45', 'Bresil', '1', 'Gardien de but', '25', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('46', 'Bresil', '1', 'Attaquant de pointe', '37', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suisse', '1', '57', '30');
 INSERT INTO collaborateur_equipe VALUES ('58', 'Suisse', '1');
@@ -1310,7 +1349,7 @@ INSERT INTO joueur_equipe VALUES ('54', 'Suisse', '1', 'Millieu offensif', '27',
 INSERT INTO joueur_equipe VALUES ('55', 'Suisse', '1', 'Gardien de but', '32', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('56', 'Suisse', '1', 'Attaquant de pointe', '51', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suede', '1', '67', '16');
 INSERT INTO collaborateur_equipe VALUES ('68', 'Suede', '1');
@@ -1322,7 +1361,7 @@ INSERT INTO joueur_equipe VALUES ('64', 'Suede', '1', 'Millieu offensif', '28', 
 INSERT INTO joueur_equipe VALUES ('65', 'Suede', '1', 'Gardien de but', '39', 'France National');
 INSERT INTO joueur_equipe VALUES ('66', 'Suede', '1', 'Attaquant de pointe', '40', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Chili', '1', '77', '14');
 INSERT INTO collaborateur_equipe VALUES ('78', 'Chili', '1');
@@ -1334,7 +1373,7 @@ INSERT INTO joueur_equipe VALUES ('74', 'Chili', '1', 'Millieu offensif', '24', 
 INSERT INTO joueur_equipe VALUES ('75', 'Chili', '1', 'Gardien de but', '40', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('76', 'Chili', '1', 'Attaquant de pointe', '46', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Angleterre', '1', '87', '19');
 INSERT INTO collaborateur_equipe VALUES ('88', 'Angleterre', '1');
@@ -1346,7 +1385,7 @@ INSERT INTO joueur_equipe VALUES ('84', 'Angleterre', '1', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('85', 'Angleterre', '1', 'Gardien de but', '29', 'France National');
 INSERT INTO joueur_equipe VALUES ('86', 'Angleterre', '1', 'Attaquant de pointe', '39', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Mexique', '1', '97', '20');
 INSERT INTO collaborateur_equipe VALUES ('98', 'Mexique', '1');
@@ -1358,7 +1397,7 @@ INSERT INTO joueur_equipe VALUES ('94', 'Mexique', '1', 'Millieu offensif', '30'
 INSERT INTO joueur_equipe VALUES ('95', 'Mexique', '1', 'Gardien de but', '41', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('96', 'Mexique', '1', 'Attaquant de pointe', '31', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Allemagne', '1', '107', '18');
 INSERT INTO collaborateur_equipe VALUES ('108', 'Allemagne', '1');
@@ -1370,7 +1409,7 @@ INSERT INTO joueur_equipe VALUES ('104', 'Allemagne', '1', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('105', 'Allemagne', '1', 'Gardien de but', '41', 'France National');
 INSERT INTO joueur_equipe VALUES ('106', 'Allemagne', '1', 'Attaquant de pointe', '46', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Portugal', '1', '117', '11');
 INSERT INTO collaborateur_equipe VALUES ('118', 'Portugal', '1');
@@ -1382,7 +1421,7 @@ INSERT INTO joueur_equipe VALUES ('114', 'Portugal', '1', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('115', 'Portugal', '1', 'Gardien de but', '25', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('116', 'Portugal', '1', 'Attaquant de pointe', '51', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Autriche', '1', '127', '25');
 INSERT INTO collaborateur_equipe VALUES ('128', 'Autriche', '1');
@@ -1394,7 +1433,7 @@ INSERT INTO joueur_equipe VALUES ('124', 'Autriche', '1', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('125', 'Autriche', '1', 'Gardien de but', '25', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('126', 'Autriche', '1', 'Attaquant de pointe', '35', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Yougoslavie', '1', '137', '27');
 INSERT INTO collaborateur_equipe VALUES ('138', 'Yougoslavie', '1');
@@ -1406,7 +1445,7 @@ INSERT INTO joueur_equipe VALUES ('134', 'Yougoslavie', '1', 'Millieu offensif',
 INSERT INTO joueur_equipe VALUES ('135', 'Yougoslavie', '1', 'Gardien de but', '40', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('136', 'Yougoslavie', '1', 'Attaquant de pointe', '35', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Union sovietique', '1', '147', '17');
 INSERT INTO collaborateur_equipe VALUES ('148', 'Union sovietique', '1');
@@ -1418,7 +1457,7 @@ INSERT INTO joueur_equipe VALUES ('144', 'Union sovietique', '1', 'Millieu offen
 INSERT INTO joueur_equipe VALUES ('145', 'Union sovietique', '1', 'Gardien de but', '37', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('146', 'Union sovietique', '1', 'Attaquant de pointe', '42', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Tchecoslovaquie', '1', '157', '7');
 INSERT INTO collaborateur_equipe VALUES ('158', 'Tchecoslovaquie', '1');
@@ -1430,7 +1469,7 @@ INSERT INTO joueur_equipe VALUES ('154', 'Tchecoslovaquie', '1', 'Millieu offens
 INSERT INTO joueur_equipe VALUES ('155', 'Tchecoslovaquie', '1', 'Gardien de but', '38', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('156', 'Tchecoslovaquie', '1', 'Attaquant de pointe', '42', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pologne', '1', '167', '13');
 INSERT INTO collaborateur_equipe VALUES ('168', 'Pologne', '1');
@@ -1442,7 +1481,7 @@ INSERT INTO joueur_equipe VALUES ('164', 'Pologne', '1', 'Millieu offensif', '29
 INSERT INTO joueur_equipe VALUES ('165', 'Pologne', '1', 'Gardien de but', '25', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('166', 'Pologne', '1', 'Attaquant de pointe', '36', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Argentine', '1', '177', '28');
 INSERT INTO collaborateur_equipe VALUES ('178', 'Argentine', '1');
@@ -1454,7 +1493,7 @@ INSERT INTO joueur_equipe VALUES ('174', 'Argentine', '1', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('175', 'Argentine', '1', 'Gardien de but', '40', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('176', 'Argentine', '1', 'Attaquant de pointe', '37', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Belgique', '1', '187', '23');
 INSERT INTO collaborateur_equipe VALUES ('188', 'Belgique', '1');
@@ -1466,7 +1505,7 @@ INSERT INTO joueur_equipe VALUES ('184', 'Belgique', '1', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('185', 'Belgique', '1', 'Gardien de but', '34', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('186', 'Belgique', '1', 'Attaquant de pointe', '39', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Croatie', '1', '197', '3');
 INSERT INTO collaborateur_equipe VALUES ('198', 'Croatie', '1');
@@ -1478,7 +1517,7 @@ INSERT INTO joueur_equipe VALUES ('194', 'Croatie', '1', 'Millieu offensif', '18
 INSERT INTO joueur_equipe VALUES ('195', 'Croatie', '1', 'Gardien de but', '34', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('196', 'Croatie', '1', 'Attaquant de pointe', '34', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pays-Bas', '1', '207', '2');
 INSERT INTO collaborateur_equipe VALUES ('208', 'Pays-Bas', '1');
@@ -1490,7 +1529,7 @@ INSERT INTO joueur_equipe VALUES ('204', 'Pays-Bas', '1', 'Millieu offensif', '3
 INSERT INTO joueur_equipe VALUES ('205', 'Pays-Bas', '1', 'Gardien de but', '26', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('206', 'Pays-Bas', '1', 'Attaquant de pointe', '31', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Coree du Sud', '1', '217', '29');
 INSERT INTO collaborateur_equipe VALUES ('218', 'Coree du Sud', '1');
@@ -1502,7 +1541,7 @@ INSERT INTO joueur_equipe VALUES ('214', 'Coree du Sud', '1', 'Millieu offensif'
 INSERT INTO joueur_equipe VALUES ('215', 'Coree du Sud', '1', 'Gardien de but', '36', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('216', 'Coree du Sud', '1', 'Attaquant de pointe', '32', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Japon', '1', '227', '8');
 INSERT INTO collaborateur_equipe VALUES ('228', 'Japon', '1');
@@ -1514,7 +1553,7 @@ INSERT INTO joueur_equipe VALUES ('224', 'Japon', '1', 'Millieu offensif', '23',
 INSERT INTO joueur_equipe VALUES ('225', 'Japon', '1', 'Gardien de but', '28', 'France National');
 INSERT INTO joueur_equipe VALUES ('226', 'Japon', '1', 'Attaquant de pointe', '39', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Russie', '1', '237', '24');
 INSERT INTO collaborateur_equipe VALUES ('238', 'Russie', '1');
@@ -1526,7 +1565,7 @@ INSERT INTO joueur_equipe VALUES ('234', 'Russie', '1', 'Millieu offensif', '31'
 INSERT INTO joueur_equipe VALUES ('235', 'Russie', '1', 'Gardien de but', '31', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('236', 'Russie', '1', 'Attaquant de pointe', '42', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Maroque', '1', '247', '15');
 INSERT INTO collaborateur_equipe VALUES ('248', 'Maroque', '1');
@@ -1538,7 +1577,7 @@ INSERT INTO joueur_equipe VALUES ('244', 'Maroque', '1', 'Millieu offensif', '29
 INSERT INTO joueur_equipe VALUES ('245', 'Maroque', '1', 'Gardien de but', '24', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('246', 'Maroque', '1', 'Attaquant de pointe', '34', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Egypt', '1', '257', '4');
 INSERT INTO collaborateur_equipe VALUES ('258', 'Egypt', '1');
@@ -1550,7 +1589,7 @@ INSERT INTO joueur_equipe VALUES ('254', 'Egypt', '1', 'Millieu offensif', '27',
 INSERT INTO joueur_equipe VALUES ('255', 'Egypt', '1', 'Gardien de but', '30', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('256', 'Egypt', '1', 'Attaquant de pointe', '38', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Grece', '1', '267', '1');
 INSERT INTO collaborateur_equipe VALUES ('268', 'Grece', '1');
@@ -1562,7 +1601,7 @@ INSERT INTO joueur_equipe VALUES ('264', 'Grece', '1', 'Millieu offensif', '19',
 INSERT INTO joueur_equipe VALUES ('265', 'Grece', '1', 'Gardien de but', '27', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('266', 'Grece', '1', 'Attaquant de pointe', '34', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Qatar', '1', '277', '9');
 INSERT INTO collaborateur_equipe VALUES ('278', 'Qatar', '1');
@@ -1574,7 +1613,7 @@ INSERT INTO joueur_equipe VALUES ('274', 'Qatar', '1', 'Millieu offensif', '26',
 INSERT INTO joueur_equipe VALUES ('275', 'Qatar', '1', 'Gardien de but', '26', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('276', 'Qatar', '1', 'Attaquant de pointe', '48', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Etats-Unis', '1', '287', '22');
 INSERT INTO collaborateur_equipe VALUES ('288', 'Etats-Unis', '1');
@@ -1586,7 +1625,7 @@ INSERT INTO joueur_equipe VALUES ('284', 'Etats-Unis', '1', 'Millieu offensif', 
 INSERT INTO joueur_equipe VALUES ('285', 'Etats-Unis', '1', 'Gardien de but', '27', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('286', 'Etats-Unis', '1', 'Attaquant de pointe', '37', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Turquie', '1', '297', '6');
 INSERT INTO collaborateur_equipe VALUES ('298', 'Turquie', '1');
@@ -1598,282 +1637,282 @@ INSERT INTO joueur_equipe VALUES ('294', 'Turquie', '1', 'Millieu offensif', '28
 INSERT INTO joueur_equipe VALUES ('295', 'Turquie', '1', 'Gardien de but', '41', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('296', 'Turquie', '1', 'Attaquant de pointe', '46', 'Arsenal F.C.');
 
- -- Stade -- 
+-- Stade 
 INSERT INTO stade VALUES ('Rocket Center', 'Hillford', '38000', 'Uruguay', '1709');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Uruguay', 'Allemagne', 'Quart de finale', '1', '0', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Uruguay', 'Allemagne', 'Principal', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('140', 'Uruguay', 'Allemagne', 'Assistant', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('170', 'Uruguay', 'Allemagne', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('11', '170', 'Uruguay', 'Allemagne', '1998-06-10', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('13', '170', 'Uruguay', 'Allemagne', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('240', 'Uruguay', 'Allemagne', 'Assistant', '1998-06-10');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Italie', 'Portugal', 'Ronde de groupe', '6', '5', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Italie', 'Portugal', 'Principal', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('21', '60', 'Italie', 'Portugal', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('150', 'Italie', 'Portugal', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('25', '150', 'Italie', 'Portugal', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('160', 'Italie', 'Portugal', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('24', '160', 'Italie', 'Portugal', '1998-06-10', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('26', '160', 'Italie', 'Portugal', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('230', 'Italie', 'Portugal', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('21', '230', 'Italie', 'Portugal', '1998-06-10', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('23', '230', 'Italie', 'Portugal', '1998-06-10', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'France', 'Autriche', 'Finale', '1', '0', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'France', 'Autriche', 'Principal', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('33', '100', 'France', 'Autriche', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('110', 'France', 'Autriche', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('36', '110', 'France', 'Autriche', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('200', 'France', 'Autriche', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('34', '200', 'France', 'Autriche', '1998-06-10', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('32', '200', 'France', 'Autriche', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('240', 'France', 'Autriche', 'Assistant', '1998-06-10');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Canada', 'Yougoslavie', 'Ronde de groupe', '5', '0', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Canada', 'Yougoslavie', 'Principal', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('44', '70', 'Canada', 'Yougoslavie', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('120', 'Canada', 'Yougoslavie', 'Assistant', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('160', 'Canada', 'Yougoslavie', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('44', '160', 'Canada', 'Yougoslavie', '1998-06-10', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('41', '160', 'Canada', 'Yougoslavie', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('240', 'Canada', 'Yougoslavie', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('42', '240', 'Canada', 'Yougoslavie', '1998-06-10', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('42', '240', 'Canada', 'Yougoslavie', '1998-06-10', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Bresil', 'Union sovietique', 'Ronde de groupe', '5', '2', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Bresil', 'Union sovietique', 'Principal', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('54', '100', 'Bresil', 'Union sovietique', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('150', 'Bresil', 'Union sovietique', 'Assistant', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('170', 'Bresil', 'Union sovietique', 'Assistant', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('210', 'Bresil', 'Union sovietique', 'Assistant', '1998-06-10');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Suisse', 'Tchecoslovaquie', 'Ronde de 16', '2', '1', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Suisse', 'Tchecoslovaquie', 'Principal', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('63', '90', 'Suisse', 'Tchecoslovaquie', '1998-06-10', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('63', '90', 'Suisse', 'Tchecoslovaquie', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('120', 'Suisse', 'Tchecoslovaquie', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('65', '120', 'Suisse', 'Tchecoslovaquie', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('170', 'Suisse', 'Tchecoslovaquie', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('64', '170', 'Suisse', 'Tchecoslovaquie', '1998-06-10', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('66', '170', 'Suisse', 'Tchecoslovaquie', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('220', 'Suisse', 'Tchecoslovaquie', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('66', '220', 'Suisse', 'Tchecoslovaquie', '1998-06-10', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Suede', 'Pologne', 'Ronde de 16', '1', '3', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Suede', 'Pologne', 'Principal', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('76', '60', 'Suede', 'Pologne', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('120', 'Suede', 'Pologne', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('75', '120', 'Suede', 'Pologne', '1998-06-10', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('75', '120', 'Suede', 'Pologne', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('200', 'Suede', 'Pologne', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('76', '200', 'Suede', 'Pologne', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('210', 'Suede', 'Pologne', 'Assistant', '1998-06-10');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Chili', 'Argentine', 'Finale', '5', '4', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Chili', 'Argentine', 'Principal', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('140', 'Chili', 'Argentine', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('83', '140', 'Chili', 'Argentine', '1998-06-10', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('85', '140', 'Chili', 'Argentine', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('170', 'Chili', 'Argentine', 'Assistant', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('210', 'Chili', 'Argentine', 'Assistant', '1998-06-10');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Angleterre', 'Belgique', 'Ronde de 16', '5', '0', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Angleterre', 'Belgique', 'Principal', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('150', 'Angleterre', 'Belgique', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('91', '150', 'Angleterre', 'Belgique', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('170', 'Angleterre', 'Belgique', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('95', '170', 'Angleterre', 'Belgique', '1998-06-10', 'Rouge');
 INSERT INTO arbitre_match VALUES ('230', 'Angleterre', 'Belgique', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('91', '230', 'Angleterre', 'Belgique', '1998-06-10', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('92', '230', 'Angleterre', 'Belgique', '1998-06-10', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('1998-06-10', 'Mexique', 'Croatie', 'Ronde de 16', '4', '2', '1', 'Rocket Center', 'Hillford');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Mexique', 'Croatie', 'Principal', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('102', '100', 'Mexique', 'Croatie', '1998-06-10', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('104', '100', 'Mexique', 'Croatie', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('140', 'Mexique', 'Croatie', 'Assistant', '1998-06-10');
 INSERT INTO arbitre_match VALUES ('160', 'Mexique', 'Croatie', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('106', '160', 'Mexique', 'Croatie', '1998-06-10', 'Jaune');
 INSERT INTO arbitre_match VALUES ('250', 'Mexique', 'Croatie', 'Assistant', '1998-06-10');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('104', '250', 'Mexique', 'Croatie', '1998-06-10', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('103', '250', 'Mexique', 'Croatie', '1998-06-10', 'Rouge');
 
 
-  -- Coupe Du Monde  --- 
+-- Coupe Du Monde
 INSERT INTO coupe_du_monde VALUES ('2', '2002-05-31', '2002-06-30');
 INSERT INTO pays_coupe VALUES ('Italie', '2');
 
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Uruguay', '2', '7', '3');
 INSERT INTO collaborateur_equipe VALUES ('8', 'Uruguay', '2');
@@ -1885,7 +1924,7 @@ INSERT INTO joueur_equipe VALUES ('4', 'Uruguay', '2', 'Millieu offensif', '30',
 INSERT INTO joueur_equipe VALUES ('5', 'Uruguay', '2', 'Gardien de but', '25', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('6', 'Uruguay', '2', 'Attaquant de pointe', '44', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Italie', '2', '17', '25');
 INSERT INTO collaborateur_equipe VALUES ('18', 'Italie', '2');
@@ -1897,7 +1936,7 @@ INSERT INTO joueur_equipe VALUES ('14', 'Italie', '2', 'Millieu offensif', '18',
 INSERT INTO joueur_equipe VALUES ('15', 'Italie', '2', 'Gardien de but', '24', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('16', 'Italie', '2', 'Attaquant de pointe', '43', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('France', '2', '27', '10');
 INSERT INTO collaborateur_equipe VALUES ('28', 'France', '2');
@@ -1909,7 +1948,7 @@ INSERT INTO joueur_equipe VALUES ('24', 'France', '2', 'Millieu offensif', '21',
 INSERT INTO joueur_equipe VALUES ('25', 'France', '2', 'Gardien de but', '36', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('26', 'France', '2', 'Attaquant de pointe', '33', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Canada', '2', '37', '29');
 INSERT INTO collaborateur_equipe VALUES ('38', 'Canada', '2');
@@ -1921,7 +1960,7 @@ INSERT INTO joueur_equipe VALUES ('34', 'Canada', '2', 'Millieu offensif', '22',
 INSERT INTO joueur_equipe VALUES ('35', 'Canada', '2', 'Gardien de but', '29', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('36', 'Canada', '2', 'Attaquant de pointe', '42', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Bresil', '2', '47', '21');
 INSERT INTO collaborateur_equipe VALUES ('48', 'Bresil', '2');
@@ -1933,7 +1972,7 @@ INSERT INTO joueur_equipe VALUES ('44', 'Bresil', '2', 'Millieu offensif', '18',
 INSERT INTO joueur_equipe VALUES ('45', 'Bresil', '2', 'Gardien de but', '41', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('46', 'Bresil', '2', 'Attaquant de pointe', '45', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suisse', '2', '57', '14');
 INSERT INTO collaborateur_equipe VALUES ('58', 'Suisse', '2');
@@ -1945,7 +1984,7 @@ INSERT INTO joueur_equipe VALUES ('54', 'Suisse', '2', 'Millieu offensif', '27',
 INSERT INTO joueur_equipe VALUES ('55', 'Suisse', '2', 'Gardien de but', '28', 'France National');
 INSERT INTO joueur_equipe VALUES ('56', 'Suisse', '2', 'Attaquant de pointe', '45', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suede', '2', '67', '4');
 INSERT INTO collaborateur_equipe VALUES ('68', 'Suede', '2');
@@ -1957,7 +1996,7 @@ INSERT INTO joueur_equipe VALUES ('64', 'Suede', '2', 'Millieu offensif', '24', 
 INSERT INTO joueur_equipe VALUES ('65', 'Suede', '2', 'Gardien de but', '39', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('66', 'Suede', '2', 'Attaquant de pointe', '48', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Chili', '2', '77', '30');
 INSERT INTO collaborateur_equipe VALUES ('78', 'Chili', '2');
@@ -1969,7 +2008,7 @@ INSERT INTO joueur_equipe VALUES ('74', 'Chili', '2', 'Millieu offensif', '30', 
 INSERT INTO joueur_equipe VALUES ('75', 'Chili', '2', 'Gardien de but', '28', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('76', 'Chili', '2', 'Attaquant de pointe', '30', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Angleterre', '2', '87', '5');
 INSERT INTO collaborateur_equipe VALUES ('88', 'Angleterre', '2');
@@ -1981,7 +2020,7 @@ INSERT INTO joueur_equipe VALUES ('84', 'Angleterre', '2', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('85', 'Angleterre', '2', 'Gardien de but', '39', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('86', 'Angleterre', '2', 'Attaquant de pointe', '31', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Mexique', '2', '97', '20');
 INSERT INTO collaborateur_equipe VALUES ('98', 'Mexique', '2');
@@ -1993,7 +2032,7 @@ INSERT INTO joueur_equipe VALUES ('94', 'Mexique', '2', 'Millieu offensif', '23'
 INSERT INTO joueur_equipe VALUES ('95', 'Mexique', '2', 'Gardien de but', '37', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('96', 'Mexique', '2', 'Attaquant de pointe', '43', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Allemagne', '2', '107', '28');
 INSERT INTO collaborateur_equipe VALUES ('108', 'Allemagne', '2');
@@ -2005,7 +2044,7 @@ INSERT INTO joueur_equipe VALUES ('104', 'Allemagne', '2', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('105', 'Allemagne', '2', 'Gardien de but', '27', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('106', 'Allemagne', '2', 'Attaquant de pointe', '42', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Portugal', '2', '117', '19');
 INSERT INTO collaborateur_equipe VALUES ('118', 'Portugal', '2');
@@ -2017,7 +2056,7 @@ INSERT INTO joueur_equipe VALUES ('114', 'Portugal', '2', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('115', 'Portugal', '2', 'Gardien de but', '29', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('116', 'Portugal', '2', 'Attaquant de pointe', '38', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Autriche', '2', '127', '6');
 INSERT INTO collaborateur_equipe VALUES ('128', 'Autriche', '2');
@@ -2029,7 +2068,7 @@ INSERT INTO joueur_equipe VALUES ('124', 'Autriche', '2', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('125', 'Autriche', '2', 'Gardien de but', '40', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('126', 'Autriche', '2', 'Attaquant de pointe', '32', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Yougoslavie', '2', '137', '27');
 INSERT INTO collaborateur_equipe VALUES ('138', 'Yougoslavie', '2');
@@ -2041,7 +2080,7 @@ INSERT INTO joueur_equipe VALUES ('134', 'Yougoslavie', '2', 'Millieu offensif',
 INSERT INTO joueur_equipe VALUES ('135', 'Yougoslavie', '2', 'Gardien de but', '34', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('136', 'Yougoslavie', '2', 'Attaquant de pointe', '34', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Union sovietique', '2', '147', '11');
 INSERT INTO collaborateur_equipe VALUES ('148', 'Union sovietique', '2');
@@ -2053,7 +2092,7 @@ INSERT INTO joueur_equipe VALUES ('144', 'Union sovietique', '2', 'Millieu offen
 INSERT INTO joueur_equipe VALUES ('145', 'Union sovietique', '2', 'Gardien de but', '24', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('146', 'Union sovietique', '2', 'Attaquant de pointe', '46', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Tchecoslovaquie', '2', '157', '16');
 INSERT INTO collaborateur_equipe VALUES ('158', 'Tchecoslovaquie', '2');
@@ -2065,7 +2104,7 @@ INSERT INTO joueur_equipe VALUES ('154', 'Tchecoslovaquie', '2', 'Millieu offens
 INSERT INTO joueur_equipe VALUES ('155', 'Tchecoslovaquie', '2', 'Gardien de but', '35', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('156', 'Tchecoslovaquie', '2', 'Attaquant de pointe', '37', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pologne', '2', '167', '18');
 INSERT INTO collaborateur_equipe VALUES ('168', 'Pologne', '2');
@@ -2077,7 +2116,7 @@ INSERT INTO joueur_equipe VALUES ('164', 'Pologne', '2', 'Millieu offensif', '23
 INSERT INTO joueur_equipe VALUES ('165', 'Pologne', '2', 'Gardien de but', '24', 'France National');
 INSERT INTO joueur_equipe VALUES ('166', 'Pologne', '2', 'Attaquant de pointe', '49', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Argentine', '2', '177', '24');
 INSERT INTO collaborateur_equipe VALUES ('178', 'Argentine', '2');
@@ -2089,7 +2128,7 @@ INSERT INTO joueur_equipe VALUES ('174', 'Argentine', '2', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('175', 'Argentine', '2', 'Gardien de but', '30', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('176', 'Argentine', '2', 'Attaquant de pointe', '48', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Belgique', '2', '187', '22');
 INSERT INTO collaborateur_equipe VALUES ('188', 'Belgique', '2');
@@ -2101,7 +2140,7 @@ INSERT INTO joueur_equipe VALUES ('184', 'Belgique', '2', 'Millieu offensif', '1
 INSERT INTO joueur_equipe VALUES ('185', 'Belgique', '2', 'Gardien de but', '27', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('186', 'Belgique', '2', 'Attaquant de pointe', '47', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Croatie', '2', '197', '13');
 INSERT INTO collaborateur_equipe VALUES ('198', 'Croatie', '2');
@@ -2113,7 +2152,7 @@ INSERT INTO joueur_equipe VALUES ('194', 'Croatie', '2', 'Millieu offensif', '29
 INSERT INTO joueur_equipe VALUES ('195', 'Croatie', '2', 'Gardien de but', '32', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('196', 'Croatie', '2', 'Attaquant de pointe', '47', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pays-Bas', '2', '207', '15');
 INSERT INTO collaborateur_equipe VALUES ('208', 'Pays-Bas', '2');
@@ -2125,7 +2164,7 @@ INSERT INTO joueur_equipe VALUES ('204', 'Pays-Bas', '2', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('205', 'Pays-Bas', '2', 'Gardien de but', '26', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('206', 'Pays-Bas', '2', 'Attaquant de pointe', '31', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Coree du Sud', '2', '217', '26');
 INSERT INTO collaborateur_equipe VALUES ('218', 'Coree du Sud', '2');
@@ -2137,7 +2176,7 @@ INSERT INTO joueur_equipe VALUES ('214', 'Coree du Sud', '2', 'Millieu offensif'
 INSERT INTO joueur_equipe VALUES ('215', 'Coree du Sud', '2', 'Gardien de but', '36', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('216', 'Coree du Sud', '2', 'Attaquant de pointe', '41', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Japon', '2', '227', '1');
 INSERT INTO collaborateur_equipe VALUES ('228', 'Japon', '2');
@@ -2149,7 +2188,7 @@ INSERT INTO joueur_equipe VALUES ('224', 'Japon', '2', 'Millieu offensif', '23',
 INSERT INTO joueur_equipe VALUES ('225', 'Japon', '2', 'Gardien de but', '34', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('226', 'Japon', '2', 'Attaquant de pointe', '34', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Russie', '2', '237', '7');
 INSERT INTO collaborateur_equipe VALUES ('238', 'Russie', '2');
@@ -2161,7 +2200,7 @@ INSERT INTO joueur_equipe VALUES ('234', 'Russie', '2', 'Millieu offensif', '26'
 INSERT INTO joueur_equipe VALUES ('235', 'Russie', '2', 'Gardien de but', '24', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('236', 'Russie', '2', 'Attaquant de pointe', '32', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Maroque', '2', '247', '17');
 INSERT INTO collaborateur_equipe VALUES ('248', 'Maroque', '2');
@@ -2173,7 +2212,7 @@ INSERT INTO joueur_equipe VALUES ('244', 'Maroque', '2', 'Millieu offensif', '29
 INSERT INTO joueur_equipe VALUES ('245', 'Maroque', '2', 'Gardien de but', '29', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('246', 'Maroque', '2', 'Attaquant de pointe', '45', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Egypt', '2', '257', '23');
 INSERT INTO collaborateur_equipe VALUES ('258', 'Egypt', '2');
@@ -2185,7 +2224,7 @@ INSERT INTO joueur_equipe VALUES ('254', 'Egypt', '2', 'Millieu offensif', '24',
 INSERT INTO joueur_equipe VALUES ('255', 'Egypt', '2', 'Gardien de but', '32', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('256', 'Egypt', '2', 'Attaquant de pointe', '43', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Grece', '2', '267', '12');
 INSERT INTO collaborateur_equipe VALUES ('268', 'Grece', '2');
@@ -2197,7 +2236,7 @@ INSERT INTO joueur_equipe VALUES ('264', 'Grece', '2', 'Millieu offensif', '22',
 INSERT INTO joueur_equipe VALUES ('265', 'Grece', '2', 'Gardien de but', '24', 'France National');
 INSERT INTO joueur_equipe VALUES ('266', 'Grece', '2', 'Attaquant de pointe', '42', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Qatar', '2', '277', '8');
 INSERT INTO collaborateur_equipe VALUES ('278', 'Qatar', '2');
@@ -2209,7 +2248,7 @@ INSERT INTO joueur_equipe VALUES ('274', 'Qatar', '2', 'Millieu offensif', '18',
 INSERT INTO joueur_equipe VALUES ('275', 'Qatar', '2', 'Gardien de but', '40', 'France National');
 INSERT INTO joueur_equipe VALUES ('276', 'Qatar', '2', 'Attaquant de pointe', '34', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Etats-Unis', '2', '287', '2');
 INSERT INTO collaborateur_equipe VALUES ('288', 'Etats-Unis', '2');
@@ -2221,7 +2260,7 @@ INSERT INTO joueur_equipe VALUES ('284', 'Etats-Unis', '2', 'Millieu offensif', 
 INSERT INTO joueur_equipe VALUES ('285', 'Etats-Unis', '2', 'Gardien de but', '30', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('286', 'Etats-Unis', '2', 'Attaquant de pointe', '41', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Turquie', '2', '297', '9');
 INSERT INTO collaborateur_equipe VALUES ('298', 'Turquie', '2');
@@ -2233,318 +2272,318 @@ INSERT INTO joueur_equipe VALUES ('294', 'Turquie', '2', 'Millieu offensif', '25
 INSERT INTO joueur_equipe VALUES ('295', 'Turquie', '2', 'Gardien de but', '39', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('296', 'Turquie', '2', 'Attaquant de pointe', '42', 'Liverpool F.C.');
 
- -- Stade -- 
+-- Stade 
 INSERT INTO stade VALUES ('Bob Center', 'Harmsby', '32000', 'Italie', '1883');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Italie', 'Autriche', 'Ronde de 16', '3', '0', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Italie', 'Autriche', 'Principal', '2002-05-31');
 INSERT INTO arbitre_match VALUES ('130', 'Italie', 'Autriche', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('11', '130', 'Italie', 'Autriche', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('12', '130', 'Italie', 'Autriche', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('170', 'Italie', 'Autriche', 'Assistant', '2002-05-31');
 INSERT INTO arbitre_match VALUES ('210', 'Italie', 'Autriche', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('12', '210', 'Italie', 'Autriche', '2002-05-31', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'France', 'Yougoslavie', 'Match de 3e place', '3', '5', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'France', 'Yougoslavie', 'Principal', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('24', '80', 'France', 'Yougoslavie', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('22', '80', 'France', 'Yougoslavie', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('110', 'France', 'Yougoslavie', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('26', '110', 'France', 'Yougoslavie', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('170', 'France', 'Yougoslavie', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('24', '170', 'France', 'Yougoslavie', '2002-05-31', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('21', '170', 'France', 'Yougoslavie', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('230', 'France', 'Yougoslavie', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('23', '230', 'France', 'Yougoslavie', '2002-05-31', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('23', '230', 'France', 'Yougoslavie', '2002-05-31', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Canada', 'Union sovietique', 'Match de 3e place', '3', '0', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Canada', 'Union sovietique', 'Principal', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('36', '70', 'Canada', 'Union sovietique', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('35', '70', 'Canada', 'Union sovietique', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('150', 'Canada', 'Union sovietique', 'Assistant', '2002-05-31');
 INSERT INTO arbitre_match VALUES ('170', 'Canada', 'Union sovietique', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('34', '170', 'Canada', 'Union sovietique', '2002-05-31', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('35', '170', 'Canada', 'Union sovietique', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('250', 'Canada', 'Union sovietique', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('32', '250', 'Canada', 'Union sovietique', '2002-05-31', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Bresil', 'Tchecoslovaquie', 'Finale', '1', '5', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Bresil', 'Tchecoslovaquie', 'Principal', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('43', '90', 'Bresil', 'Tchecoslovaquie', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('45', '90', 'Bresil', 'Tchecoslovaquie', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('110', 'Bresil', 'Tchecoslovaquie', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('43', '110', 'Bresil', 'Tchecoslovaquie', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('170', 'Bresil', 'Tchecoslovaquie', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('42', '170', 'Bresil', 'Tchecoslovaquie', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('220', 'Bresil', 'Tchecoslovaquie', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('44', '220', 'Bresil', 'Tchecoslovaquie', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('41', '220', 'Bresil', 'Tchecoslovaquie', '2002-05-31', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Suisse', 'Pologne', 'Ronde de groupe', '4', '0', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Suisse', 'Pologne', 'Principal', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('52', '90', 'Suisse', 'Pologne', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('51', '90', 'Suisse', 'Pologne', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('140', 'Suisse', 'Pologne', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('55', '140', 'Suisse', 'Pologne', '2002-05-31', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('53', '140', 'Suisse', 'Pologne', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('170', 'Suisse', 'Pologne', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('53', '170', 'Suisse', 'Pologne', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('210', 'Suisse', 'Pologne', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('52', '210', 'Suisse', 'Pologne', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('53', '210', 'Suisse', 'Pologne', '2002-05-31', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Suede', 'Argentine', 'Semi-finale', '0', '3', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Suede', 'Argentine', 'Principal', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('63', '100', 'Suede', 'Argentine', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('120', 'Suede', 'Argentine', 'Assistant', '2002-05-31');
 INSERT INTO arbitre_match VALUES ('190', 'Suede', 'Argentine', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('66', '190', 'Suede', 'Argentine', '2002-05-31', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('64', '190', 'Suede', 'Argentine', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('210', 'Suede', 'Argentine', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('62', '210', 'Suede', 'Argentine', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('64', '210', 'Suede', 'Argentine', '2002-05-31', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Chili', 'Belgique', 'Ronde de 16', '0', '4', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Chili', 'Belgique', 'Principal', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('76', '60', 'Chili', 'Belgique', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('110', 'Chili', 'Belgique', 'Assistant', '2002-05-31');
 INSERT INTO arbitre_match VALUES ('190', 'Chili', 'Belgique', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('74', '190', 'Chili', 'Belgique', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('250', 'Chili', 'Belgique', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('74', '250', 'Chili', 'Belgique', '2002-05-31', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Angleterre', 'Croatie', 'Ronde de 16', '0', '4', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Angleterre', 'Croatie', 'Principal', '2002-05-31');
 INSERT INTO arbitre_match VALUES ('130', 'Angleterre', 'Croatie', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('85', '130', 'Angleterre', 'Croatie', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('190', 'Angleterre', 'Croatie', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('86', '190', 'Angleterre', 'Croatie', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('230', 'Angleterre', 'Croatie', 'Assistant', '2002-05-31');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Mexique', 'Pays-Bas', 'Finale', '5', '4', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Mexique', 'Pays-Bas', 'Principal', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('91', '90', 'Mexique', 'Pays-Bas', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('120', 'Mexique', 'Pays-Bas', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('91', '120', 'Mexique', 'Pays-Bas', '2002-05-31', 'Jaune');
 INSERT INTO arbitre_match VALUES ('180', 'Mexique', 'Pays-Bas', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('91', '180', 'Mexique', 'Pays-Bas', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('93', '180', 'Mexique', 'Pays-Bas', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('240', 'Mexique', 'Pays-Bas', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('96', '240', 'Mexique', 'Pays-Bas', '2002-05-31', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('95', '240', 'Mexique', 'Pays-Bas', '2002-05-31', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2002-05-31', 'Allemagne', 'Coree du Sud', 'Finale', '3', '4', '2', 'Bob Center', 'Harmsby');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Allemagne', 'Coree du Sud', 'Principal', '2002-05-31');
 INSERT INTO arbitre_match VALUES ('140', 'Allemagne', 'Coree du Sud', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('101', '140', 'Allemagne', 'Coree du Sud', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('200', 'Allemagne', 'Coree du Sud', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('105', '200', 'Allemagne', 'Coree du Sud', '2002-05-31', 'Rouge');
 INSERT INTO arbitre_match VALUES ('240', 'Allemagne', 'Coree du Sud', 'Assistant', '2002-05-31');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('103', '240', 'Allemagne', 'Coree du Sud', '2002-05-31', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('102', '240', 'Allemagne', 'Coree du Sud', '2002-05-31', 'Jaune');
 
 
-  -- Coupe Du Monde  --- 
+-- Coupe Du Monde
 INSERT INTO coupe_du_monde VALUES ('3', '2006-06-09', '2006-07-9');
 INSERT INTO pays_coupe VALUES ('France', '3');
 
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Uruguay', '3', '7', '8');
 INSERT INTO collaborateur_equipe VALUES ('8', 'Uruguay', '3');
@@ -2556,7 +2595,7 @@ INSERT INTO joueur_equipe VALUES ('4', 'Uruguay', '3', 'Millieu offensif', '21',
 INSERT INTO joueur_equipe VALUES ('5', 'Uruguay', '3', 'Gardien de but', '25', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('6', 'Uruguay', '3', 'Attaquant de pointe', '35', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Italie', '3', '17', '16');
 INSERT INTO collaborateur_equipe VALUES ('18', 'Italie', '3');
@@ -2568,7 +2607,7 @@ INSERT INTO joueur_equipe VALUES ('14', 'Italie', '3', 'Millieu offensif', '28',
 INSERT INTO joueur_equipe VALUES ('15', 'Italie', '3', 'Gardien de but', '31', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('16', 'Italie', '3', 'Attaquant de pointe', '39', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('France', '3', '27', '9');
 INSERT INTO collaborateur_equipe VALUES ('28', 'France', '3');
@@ -2580,7 +2619,7 @@ INSERT INTO joueur_equipe VALUES ('24', 'France', '3', 'Millieu offensif', '28',
 INSERT INTO joueur_equipe VALUES ('25', 'France', '3', 'Gardien de but', '37', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('26', 'France', '3', 'Attaquant de pointe', '36', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Canada', '3', '37', '13');
 INSERT INTO collaborateur_equipe VALUES ('38', 'Canada', '3');
@@ -2592,7 +2631,7 @@ INSERT INTO joueur_equipe VALUES ('34', 'Canada', '3', 'Millieu offensif', '19',
 INSERT INTO joueur_equipe VALUES ('35', 'Canada', '3', 'Gardien de but', '32', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('36', 'Canada', '3', 'Attaquant de pointe', '31', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Bresil', '3', '47', '1');
 INSERT INTO collaborateur_equipe VALUES ('48', 'Bresil', '3');
@@ -2604,7 +2643,7 @@ INSERT INTO joueur_equipe VALUES ('44', 'Bresil', '3', 'Millieu offensif', '21',
 INSERT INTO joueur_equipe VALUES ('45', 'Bresil', '3', 'Gardien de but', '40', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('46', 'Bresil', '3', 'Attaquant de pointe', '37', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suisse', '3', '57', '3');
 INSERT INTO collaborateur_equipe VALUES ('58', 'Suisse', '3');
@@ -2616,7 +2655,7 @@ INSERT INTO joueur_equipe VALUES ('54', 'Suisse', '3', 'Millieu offensif', '25',
 INSERT INTO joueur_equipe VALUES ('55', 'Suisse', '3', 'Gardien de but', '38', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('56', 'Suisse', '3', 'Attaquant de pointe', '51', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suede', '3', '67', '19');
 INSERT INTO collaborateur_equipe VALUES ('68', 'Suede', '3');
@@ -2628,7 +2667,7 @@ INSERT INTO joueur_equipe VALUES ('64', 'Suede', '3', 'Millieu offensif', '26', 
 INSERT INTO joueur_equipe VALUES ('65', 'Suede', '3', 'Gardien de but', '38', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('66', 'Suede', '3', 'Attaquant de pointe', '33', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Chili', '3', '77', '4');
 INSERT INTO collaborateur_equipe VALUES ('78', 'Chili', '3');
@@ -2640,7 +2679,7 @@ INSERT INTO joueur_equipe VALUES ('74', 'Chili', '3', 'Millieu offensif', '23', 
 INSERT INTO joueur_equipe VALUES ('75', 'Chili', '3', 'Gardien de but', '36', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('76', 'Chili', '3', 'Attaquant de pointe', '35', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Angleterre', '3', '87', '15');
 INSERT INTO collaborateur_equipe VALUES ('88', 'Angleterre', '3');
@@ -2652,7 +2691,7 @@ INSERT INTO joueur_equipe VALUES ('84', 'Angleterre', '3', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('85', 'Angleterre', '3', 'Gardien de but', '37', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('86', 'Angleterre', '3', 'Attaquant de pointe', '31', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Mexique', '3', '97', '23');
 INSERT INTO collaborateur_equipe VALUES ('98', 'Mexique', '3');
@@ -2664,7 +2703,7 @@ INSERT INTO joueur_equipe VALUES ('94', 'Mexique', '3', 'Millieu offensif', '23'
 INSERT INTO joueur_equipe VALUES ('95', 'Mexique', '3', 'Gardien de but', '40', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('96', 'Mexique', '3', 'Attaquant de pointe', '33', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Allemagne', '3', '107', '6');
 INSERT INTO collaborateur_equipe VALUES ('108', 'Allemagne', '3');
@@ -2676,7 +2715,7 @@ INSERT INTO joueur_equipe VALUES ('104', 'Allemagne', '3', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('105', 'Allemagne', '3', 'Gardien de but', '38', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('106', 'Allemagne', '3', 'Attaquant de pointe', '34', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Portugal', '3', '117', '30');
 INSERT INTO collaborateur_equipe VALUES ('118', 'Portugal', '3');
@@ -2688,7 +2727,7 @@ INSERT INTO joueur_equipe VALUES ('114', 'Portugal', '3', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('115', 'Portugal', '3', 'Gardien de but', '38', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('116', 'Portugal', '3', 'Attaquant de pointe', '43', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Autriche', '3', '127', '27');
 INSERT INTO collaborateur_equipe VALUES ('128', 'Autriche', '3');
@@ -2700,7 +2739,7 @@ INSERT INTO joueur_equipe VALUES ('124', 'Autriche', '3', 'Millieu offensif', '3
 INSERT INTO joueur_equipe VALUES ('125', 'Autriche', '3', 'Gardien de but', '27', 'France National');
 INSERT INTO joueur_equipe VALUES ('126', 'Autriche', '3', 'Attaquant de pointe', '49', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Yougoslavie', '3', '137', '22');
 INSERT INTO collaborateur_equipe VALUES ('138', 'Yougoslavie', '3');
@@ -2712,7 +2751,7 @@ INSERT INTO joueur_equipe VALUES ('134', 'Yougoslavie', '3', 'Millieu offensif',
 INSERT INTO joueur_equipe VALUES ('135', 'Yougoslavie', '3', 'Gardien de but', '28', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('136', 'Yougoslavie', '3', 'Attaquant de pointe', '51', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Union sovietique', '3', '147', '17');
 INSERT INTO collaborateur_equipe VALUES ('148', 'Union sovietique', '3');
@@ -2724,7 +2763,7 @@ INSERT INTO joueur_equipe VALUES ('144', 'Union sovietique', '3', 'Millieu offen
 INSERT INTO joueur_equipe VALUES ('145', 'Union sovietique', '3', 'Gardien de but', '32', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('146', 'Union sovietique', '3', 'Attaquant de pointe', '51', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Tchecoslovaquie', '3', '157', '25');
 INSERT INTO collaborateur_equipe VALUES ('158', 'Tchecoslovaquie', '3');
@@ -2736,7 +2775,7 @@ INSERT INTO joueur_equipe VALUES ('154', 'Tchecoslovaquie', '3', 'Millieu offens
 INSERT INTO joueur_equipe VALUES ('155', 'Tchecoslovaquie', '3', 'Gardien de but', '39', 'France National');
 INSERT INTO joueur_equipe VALUES ('156', 'Tchecoslovaquie', '3', 'Attaquant de pointe', '47', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pologne', '3', '167', '5');
 INSERT INTO collaborateur_equipe VALUES ('168', 'Pologne', '3');
@@ -2748,7 +2787,7 @@ INSERT INTO joueur_equipe VALUES ('164', 'Pologne', '3', 'Millieu offensif', '21
 INSERT INTO joueur_equipe VALUES ('165', 'Pologne', '3', 'Gardien de but', '31', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('166', 'Pologne', '3', 'Attaquant de pointe', '33', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Argentine', '3', '177', '12');
 INSERT INTO collaborateur_equipe VALUES ('178', 'Argentine', '3');
@@ -2760,7 +2799,7 @@ INSERT INTO joueur_equipe VALUES ('174', 'Argentine', '3', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('175', 'Argentine', '3', 'Gardien de but', '40', 'France National');
 INSERT INTO joueur_equipe VALUES ('176', 'Argentine', '3', 'Attaquant de pointe', '32', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Belgique', '3', '187', '14');
 INSERT INTO collaborateur_equipe VALUES ('188', 'Belgique', '3');
@@ -2772,7 +2811,7 @@ INSERT INTO joueur_equipe VALUES ('184', 'Belgique', '3', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('185', 'Belgique', '3', 'Gardien de but', '38', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('186', 'Belgique', '3', 'Attaquant de pointe', '49', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Croatie', '3', '197', '24');
 INSERT INTO collaborateur_equipe VALUES ('198', 'Croatie', '3');
@@ -2784,7 +2823,7 @@ INSERT INTO joueur_equipe VALUES ('194', 'Croatie', '3', 'Millieu offensif', '25
 INSERT INTO joueur_equipe VALUES ('195', 'Croatie', '3', 'Gardien de but', '34', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('196', 'Croatie', '3', 'Attaquant de pointe', '33', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pays-Bas', '3', '207', '10');
 INSERT INTO collaborateur_equipe VALUES ('208', 'Pays-Bas', '3');
@@ -2796,7 +2835,7 @@ INSERT INTO joueur_equipe VALUES ('204', 'Pays-Bas', '3', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('205', 'Pays-Bas', '3', 'Gardien de but', '29', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('206', 'Pays-Bas', '3', 'Attaquant de pointe', '50', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Coree du Sud', '3', '217', '7');
 INSERT INTO collaborateur_equipe VALUES ('218', 'Coree du Sud', '3');
@@ -2808,7 +2847,7 @@ INSERT INTO joueur_equipe VALUES ('214', 'Coree du Sud', '3', 'Millieu offensif'
 INSERT INTO joueur_equipe VALUES ('215', 'Coree du Sud', '3', 'Gardien de but', '37', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('216', 'Coree du Sud', '3', 'Attaquant de pointe', '44', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Japon', '3', '227', '21');
 INSERT INTO collaborateur_equipe VALUES ('228', 'Japon', '3');
@@ -2820,7 +2859,7 @@ INSERT INTO joueur_equipe VALUES ('224', 'Japon', '3', 'Millieu offensif', '23',
 INSERT INTO joueur_equipe VALUES ('225', 'Japon', '3', 'Gardien de but', '24', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('226', 'Japon', '3', 'Attaquant de pointe', '49', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Russie', '3', '237', '2');
 INSERT INTO collaborateur_equipe VALUES ('238', 'Russie', '3');
@@ -2832,7 +2871,7 @@ INSERT INTO joueur_equipe VALUES ('234', 'Russie', '3', 'Millieu offensif', '20'
 INSERT INTO joueur_equipe VALUES ('235', 'Russie', '3', 'Gardien de but', '33', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('236', 'Russie', '3', 'Attaquant de pointe', '42', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Maroque', '3', '247', '28');
 INSERT INTO collaborateur_equipe VALUES ('248', 'Maroque', '3');
@@ -2844,7 +2883,7 @@ INSERT INTO joueur_equipe VALUES ('244', 'Maroque', '3', 'Millieu offensif', '20
 INSERT INTO joueur_equipe VALUES ('245', 'Maroque', '3', 'Gardien de but', '25', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('246', 'Maroque', '3', 'Attaquant de pointe', '37', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Egypt', '3', '257', '18');
 INSERT INTO collaborateur_equipe VALUES ('258', 'Egypt', '3');
@@ -2856,7 +2895,7 @@ INSERT INTO joueur_equipe VALUES ('254', 'Egypt', '3', 'Millieu offensif', '21',
 INSERT INTO joueur_equipe VALUES ('255', 'Egypt', '3', 'Gardien de but', '29', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('256', 'Egypt', '3', 'Attaquant de pointe', '44', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Grece', '3', '267', '20');
 INSERT INTO collaborateur_equipe VALUES ('268', 'Grece', '3');
@@ -2868,7 +2907,7 @@ INSERT INTO joueur_equipe VALUES ('264', 'Grece', '3', 'Millieu offensif', '31',
 INSERT INTO joueur_equipe VALUES ('265', 'Grece', '3', 'Gardien de but', '38', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('266', 'Grece', '3', 'Attaquant de pointe', '32', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Qatar', '3', '277', '29');
 INSERT INTO collaborateur_equipe VALUES ('278', 'Qatar', '3');
@@ -2880,7 +2919,7 @@ INSERT INTO joueur_equipe VALUES ('274', 'Qatar', '3', 'Millieu offensif', '21',
 INSERT INTO joueur_equipe VALUES ('275', 'Qatar', '3', 'Gardien de but', '26', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('276', 'Qatar', '3', 'Attaquant de pointe', '31', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Etats-Unis', '3', '287', '26');
 INSERT INTO collaborateur_equipe VALUES ('288', 'Etats-Unis', '3');
@@ -2892,7 +2931,7 @@ INSERT INTO joueur_equipe VALUES ('284', 'Etats-Unis', '3', 'Millieu offensif', 
 INSERT INTO joueur_equipe VALUES ('285', 'Etats-Unis', '3', 'Gardien de but', '24', 'France National');
 INSERT INTO joueur_equipe VALUES ('286', 'Etats-Unis', '3', 'Attaquant de pointe', '37', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Turquie', '3', '297', '11');
 INSERT INTO collaborateur_equipe VALUES ('298', 'Turquie', '3');
@@ -2904,274 +2943,274 @@ INSERT INTO joueur_equipe VALUES ('294', 'Turquie', '3', 'Millieu offensif', '19
 INSERT INTO joueur_equipe VALUES ('295', 'Turquie', '3', 'Gardien de but', '39', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('296', 'Turquie', '3', 'Attaquant de pointe', '41', 'Arsenal F.C.');
 
- -- Stade -- 
+-- Stade 
 INSERT INTO stade VALUES ('Super Field', 'Croma', '36000', 'France', '1810');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'France', 'Union sovietique', 'Quart de finale', '2', '3', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'France', 'Union sovietique', 'Principal', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('130', 'France', 'Union sovietique', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('11', '130', 'France', 'Union sovietique', '2006-06-09', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('16', '130', 'France', 'Union sovietique', '2006-06-09', 'Jaune');
 INSERT INTO arbitre_match VALUES ('200', 'France', 'Union sovietique', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('16', '200', 'France', 'Union sovietique', '2006-06-09', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('12', '200', 'France', 'Union sovietique', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('230', 'France', 'Union sovietique', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('13', '230', 'France', 'Union sovietique', '2006-06-09', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('16', '230', 'France', 'Union sovietique', '2006-06-09', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Canada', 'Tchecoslovaquie', 'Finale', '3', '5', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Canada', 'Tchecoslovaquie', 'Principal', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('24', '60', 'Canada', 'Tchecoslovaquie', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('110', 'Canada', 'Tchecoslovaquie', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('22', '110', 'Canada', 'Tchecoslovaquie', '2006-06-09', 'Jaune');
 INSERT INTO arbitre_match VALUES ('190', 'Canada', 'Tchecoslovaquie', 'Assistant', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('240', 'Canada', 'Tchecoslovaquie', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('23', '240', 'Canada', 'Tchecoslovaquie', '2006-06-09', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('24', '240', 'Canada', 'Tchecoslovaquie', '2006-06-09', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Bresil', 'Pologne', 'Ronde de groupe', '0', '1', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Bresil', 'Pologne', 'Principal', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('31', '80', 'Bresil', 'Pologne', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('120', 'Bresil', 'Pologne', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('36', '120', 'Bresil', 'Pologne', '2006-06-09', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('31', '120', 'Bresil', 'Pologne', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('160', 'Bresil', 'Pologne', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('36', '160', 'Bresil', 'Pologne', '2006-06-09', 'Jaune');
 INSERT INTO arbitre_match VALUES ('210', 'Bresil', 'Pologne', 'Assistant', '2006-06-09');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Suisse', 'Argentine', 'Ronde de groupe', '0', '2', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Suisse', 'Argentine', 'Principal', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('42', '70', 'Suisse', 'Argentine', '2006-06-09', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('42', '70', 'Suisse', 'Argentine', '2006-06-09', 'Jaune');
 INSERT INTO arbitre_match VALUES ('140', 'Suisse', 'Argentine', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('45', '140', 'Suisse', 'Argentine', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('190', 'Suisse', 'Argentine', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('42', '190', 'Suisse', 'Argentine', '2006-06-09', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('46', '190', 'Suisse', 'Argentine', '2006-06-09', 'Jaune');
 INSERT INTO arbitre_match VALUES ('210', 'Suisse', 'Argentine', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('41', '210', 'Suisse', 'Argentine', '2006-06-09', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Suede', 'Belgique', 'Match de 3e place', '3', '5', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Suede', 'Belgique', 'Principal', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('51', '80', 'Suede', 'Belgique', '2006-06-09', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('56', '80', 'Suede', 'Belgique', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('140', 'Suede', 'Belgique', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('53', '140', 'Suede', 'Belgique', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('190', 'Suede', 'Belgique', 'Assistant', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('230', 'Suede', 'Belgique', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('51', '230', 'Suede', 'Belgique', '2006-06-09', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Chili', 'Croatie', 'Finale', '4', '1', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Chili', 'Croatie', 'Principal', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('110', 'Chili', 'Croatie', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('61', '110', 'Chili', 'Croatie', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('190', 'Chili', 'Croatie', 'Assistant', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('220', 'Chili', 'Croatie', 'Assistant', '2006-06-09');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Angleterre', 'Pays-Bas', 'Semi-finale', '1', '4', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Angleterre', 'Pays-Bas', 'Principal', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('120', 'Angleterre', 'Pays-Bas', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('72', '120', 'Angleterre', 'Pays-Bas', '2006-06-09', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('76', '120', 'Angleterre', 'Pays-Bas', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('170', 'Angleterre', 'Pays-Bas', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('74', '170', 'Angleterre', 'Pays-Bas', '2006-06-09', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('76', '170', 'Angleterre', 'Pays-Bas', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('240', 'Angleterre', 'Pays-Bas', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('73', '240', 'Angleterre', 'Pays-Bas', '2006-06-09', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Mexique', 'Coree du Sud', 'Semi-finale', '3', '4', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Mexique', 'Coree du Sud', 'Principal', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('130', 'Mexique', 'Coree du Sud', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('83', '130', 'Mexique', 'Coree du Sud', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('200', 'Mexique', 'Coree du Sud', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('86', '200', 'Mexique', 'Coree du Sud', '2006-06-09', 'Jaune');
 INSERT INTO arbitre_match VALUES ('240', 'Mexique', 'Coree du Sud', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('85', '240', 'Mexique', 'Coree du Sud', '2006-06-09', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Allemagne', 'Japon', 'Match de 3e place', '2', '3', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Allemagne', 'Japon', 'Principal', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('93', '90', 'Allemagne', 'Japon', '2006-06-09', 'Jaune');
 INSERT INTO arbitre_match VALUES ('130', 'Allemagne', 'Japon', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('95', '130', 'Allemagne', 'Japon', '2006-06-09', 'Rouge');
 INSERT INTO arbitre_match VALUES ('170', 'Allemagne', 'Japon', 'Assistant', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('230', 'Allemagne', 'Japon', 'Assistant', '2006-06-09');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2006-06-09', 'Portugal', 'Russie', 'Ronde de groupe', '1', '0', '3', 'Super Field', 'Croma');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Portugal', 'Russie', 'Principal', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('140', 'Portugal', 'Russie', 'Assistant', '2006-06-09');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('103', '140', 'Portugal', 'Russie', '2006-06-09', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('105', '140', 'Portugal', 'Russie', '2006-06-09', 'Jaune');
 INSERT INTO arbitre_match VALUES ('180', 'Portugal', 'Russie', 'Assistant', '2006-06-09');
 INSERT INTO arbitre_match VALUES ('240', 'Portugal', 'Russie', 'Assistant', '2006-06-09');
 
 
-  -- Coupe Du Monde  --- 
+-- Coupe Du Monde
 INSERT INTO coupe_du_monde VALUES ('4', '2010-06-11', '2010-07-11');
 INSERT INTO pays_coupe VALUES ('Canada', '4');
 
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Uruguay', '4', '7', '9');
 INSERT INTO collaborateur_equipe VALUES ('8', 'Uruguay', '4');
@@ -3183,7 +3222,7 @@ INSERT INTO joueur_equipe VALUES ('4', 'Uruguay', '4', 'Millieu offensif', '19',
 INSERT INTO joueur_equipe VALUES ('5', 'Uruguay', '4', 'Gardien de but', '32', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('6', 'Uruguay', '4', 'Attaquant de pointe', '44', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Italie', '4', '17', '4');
 INSERT INTO collaborateur_equipe VALUES ('18', 'Italie', '4');
@@ -3195,7 +3234,7 @@ INSERT INTO joueur_equipe VALUES ('14', 'Italie', '4', 'Millieu offensif', '22',
 INSERT INTO joueur_equipe VALUES ('15', 'Italie', '4', 'Gardien de but', '37', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('16', 'Italie', '4', 'Attaquant de pointe', '30', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('France', '4', '27', '26');
 INSERT INTO collaborateur_equipe VALUES ('28', 'France', '4');
@@ -3207,7 +3246,7 @@ INSERT INTO joueur_equipe VALUES ('24', 'France', '4', 'Millieu offensif', '29',
 INSERT INTO joueur_equipe VALUES ('25', 'France', '4', 'Gardien de but', '24', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('26', 'France', '4', 'Attaquant de pointe', '50', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Canada', '4', '37', '21');
 INSERT INTO collaborateur_equipe VALUES ('38', 'Canada', '4');
@@ -3219,7 +3258,7 @@ INSERT INTO joueur_equipe VALUES ('34', 'Canada', '4', 'Millieu offensif', '29',
 INSERT INTO joueur_equipe VALUES ('35', 'Canada', '4', 'Gardien de but', '33', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('36', 'Canada', '4', 'Attaquant de pointe', '30', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Bresil', '4', '47', '20');
 INSERT INTO collaborateur_equipe VALUES ('48', 'Bresil', '4');
@@ -3231,7 +3270,7 @@ INSERT INTO joueur_equipe VALUES ('44', 'Bresil', '4', 'Millieu offensif', '29',
 INSERT INTO joueur_equipe VALUES ('45', 'Bresil', '4', 'Gardien de but', '27', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('46', 'Bresil', '4', 'Attaquant de pointe', '38', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suisse', '4', '57', '13');
 INSERT INTO collaborateur_equipe VALUES ('58', 'Suisse', '4');
@@ -3243,7 +3282,7 @@ INSERT INTO joueur_equipe VALUES ('54', 'Suisse', '4', 'Millieu offensif', '24',
 INSERT INTO joueur_equipe VALUES ('55', 'Suisse', '4', 'Gardien de but', '37', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('56', 'Suisse', '4', 'Attaquant de pointe', '43', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suede', '4', '67', '6');
 INSERT INTO collaborateur_equipe VALUES ('68', 'Suede', '4');
@@ -3255,7 +3294,7 @@ INSERT INTO joueur_equipe VALUES ('64', 'Suede', '4', 'Millieu offensif', '28', 
 INSERT INTO joueur_equipe VALUES ('65', 'Suede', '4', 'Gardien de but', '33', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('66', 'Suede', '4', 'Attaquant de pointe', '44', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Chili', '4', '77', '23');
 INSERT INTO collaborateur_equipe VALUES ('78', 'Chili', '4');
@@ -3267,7 +3306,7 @@ INSERT INTO joueur_equipe VALUES ('74', 'Chili', '4', 'Millieu offensif', '23', 
 INSERT INTO joueur_equipe VALUES ('75', 'Chili', '4', 'Gardien de but', '34', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('76', 'Chili', '4', 'Attaquant de pointe', '37', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Angleterre', '4', '87', '12');
 INSERT INTO collaborateur_equipe VALUES ('88', 'Angleterre', '4');
@@ -3279,7 +3318,7 @@ INSERT INTO joueur_equipe VALUES ('84', 'Angleterre', '4', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('85', 'Angleterre', '4', 'Gardien de but', '33', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('86', 'Angleterre', '4', 'Attaquant de pointe', '45', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Mexique', '4', '97', '25');
 INSERT INTO collaborateur_equipe VALUES ('98', 'Mexique', '4');
@@ -3291,7 +3330,7 @@ INSERT INTO joueur_equipe VALUES ('94', 'Mexique', '4', 'Millieu offensif', '30'
 INSERT INTO joueur_equipe VALUES ('95', 'Mexique', '4', 'Gardien de but', '37', 'France National');
 INSERT INTO joueur_equipe VALUES ('96', 'Mexique', '4', 'Attaquant de pointe', '38', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Allemagne', '4', '107', '29');
 INSERT INTO collaborateur_equipe VALUES ('108', 'Allemagne', '4');
@@ -3303,7 +3342,7 @@ INSERT INTO joueur_equipe VALUES ('104', 'Allemagne', '4', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('105', 'Allemagne', '4', 'Gardien de but', '33', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('106', 'Allemagne', '4', 'Attaquant de pointe', '48', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Portugal', '4', '117', '27');
 INSERT INTO collaborateur_equipe VALUES ('118', 'Portugal', '4');
@@ -3315,7 +3354,7 @@ INSERT INTO joueur_equipe VALUES ('114', 'Portugal', '4', 'Millieu offensif', '1
 INSERT INTO joueur_equipe VALUES ('115', 'Portugal', '4', 'Gardien de but', '38', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('116', 'Portugal', '4', 'Attaquant de pointe', '39', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Autriche', '4', '127', '14');
 INSERT INTO collaborateur_equipe VALUES ('128', 'Autriche', '4');
@@ -3327,7 +3366,7 @@ INSERT INTO joueur_equipe VALUES ('124', 'Autriche', '4', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('125', 'Autriche', '4', 'Gardien de but', '24', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('126', 'Autriche', '4', 'Attaquant de pointe', '48', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Yougoslavie', '4', '137', '2');
 INSERT INTO collaborateur_equipe VALUES ('138', 'Yougoslavie', '4');
@@ -3339,7 +3378,7 @@ INSERT INTO joueur_equipe VALUES ('134', 'Yougoslavie', '4', 'Millieu offensif',
 INSERT INTO joueur_equipe VALUES ('135', 'Yougoslavie', '4', 'Gardien de but', '26', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('136', 'Yougoslavie', '4', 'Attaquant de pointe', '33', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Union sovietique', '4', '147', '5');
 INSERT INTO collaborateur_equipe VALUES ('148', 'Union sovietique', '4');
@@ -3351,7 +3390,7 @@ INSERT INTO joueur_equipe VALUES ('144', 'Union sovietique', '4', 'Millieu offen
 INSERT INTO joueur_equipe VALUES ('145', 'Union sovietique', '4', 'Gardien de but', '36', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('146', 'Union sovietique', '4', 'Attaquant de pointe', '36', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Tchecoslovaquie', '4', '157', '17');
 INSERT INTO collaborateur_equipe VALUES ('158', 'Tchecoslovaquie', '4');
@@ -3363,7 +3402,7 @@ INSERT INTO joueur_equipe VALUES ('154', 'Tchecoslovaquie', '4', 'Millieu offens
 INSERT INTO joueur_equipe VALUES ('155', 'Tchecoslovaquie', '4', 'Gardien de but', '30', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('156', 'Tchecoslovaquie', '4', 'Attaquant de pointe', '40', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pologne', '4', '167', '18');
 INSERT INTO collaborateur_equipe VALUES ('168', 'Pologne', '4');
@@ -3375,7 +3414,7 @@ INSERT INTO joueur_equipe VALUES ('164', 'Pologne', '4', 'Millieu offensif', '28
 INSERT INTO joueur_equipe VALUES ('165', 'Pologne', '4', 'Gardien de but', '35', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('166', 'Pologne', '4', 'Attaquant de pointe', '39', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Argentine', '4', '177', '22');
 INSERT INTO collaborateur_equipe VALUES ('178', 'Argentine', '4');
@@ -3387,7 +3426,7 @@ INSERT INTO joueur_equipe VALUES ('174', 'Argentine', '4', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('175', 'Argentine', '4', 'Gardien de but', '26', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('176', 'Argentine', '4', 'Attaquant de pointe', '47', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Belgique', '4', '187', '8');
 INSERT INTO collaborateur_equipe VALUES ('188', 'Belgique', '4');
@@ -3399,7 +3438,7 @@ INSERT INTO joueur_equipe VALUES ('184', 'Belgique', '4', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('185', 'Belgique', '4', 'Gardien de but', '40', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('186', 'Belgique', '4', 'Attaquant de pointe', '31', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Croatie', '4', '197', '30');
 INSERT INTO collaborateur_equipe VALUES ('198', 'Croatie', '4');
@@ -3411,7 +3450,7 @@ INSERT INTO joueur_equipe VALUES ('194', 'Croatie', '4', 'Millieu offensif', '24
 INSERT INTO joueur_equipe VALUES ('195', 'Croatie', '4', 'Gardien de but', '35', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('196', 'Croatie', '4', 'Attaquant de pointe', '32', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pays-Bas', '4', '207', '16');
 INSERT INTO collaborateur_equipe VALUES ('208', 'Pays-Bas', '4');
@@ -3423,7 +3462,7 @@ INSERT INTO joueur_equipe VALUES ('204', 'Pays-Bas', '4', 'Millieu offensif', '3
 INSERT INTO joueur_equipe VALUES ('205', 'Pays-Bas', '4', 'Gardien de but', '35', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('206', 'Pays-Bas', '4', 'Attaquant de pointe', '50', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Coree du Sud', '4', '217', '19');
 INSERT INTO collaborateur_equipe VALUES ('218', 'Coree du Sud', '4');
@@ -3435,7 +3474,7 @@ INSERT INTO joueur_equipe VALUES ('214', 'Coree du Sud', '4', 'Millieu offensif'
 INSERT INTO joueur_equipe VALUES ('215', 'Coree du Sud', '4', 'Gardien de but', '41', 'France National');
 INSERT INTO joueur_equipe VALUES ('216', 'Coree du Sud', '4', 'Attaquant de pointe', '30', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Japon', '4', '227', '24');
 INSERT INTO collaborateur_equipe VALUES ('228', 'Japon', '4');
@@ -3447,7 +3486,7 @@ INSERT INTO joueur_equipe VALUES ('224', 'Japon', '4', 'Millieu offensif', '24',
 INSERT INTO joueur_equipe VALUES ('225', 'Japon', '4', 'Gardien de but', '26', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('226', 'Japon', '4', 'Attaquant de pointe', '44', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Russie', '4', '237', '1');
 INSERT INTO collaborateur_equipe VALUES ('238', 'Russie', '4');
@@ -3459,7 +3498,7 @@ INSERT INTO joueur_equipe VALUES ('234', 'Russie', '4', 'Millieu offensif', '24'
 INSERT INTO joueur_equipe VALUES ('235', 'Russie', '4', 'Gardien de but', '28', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('236', 'Russie', '4', 'Attaquant de pointe', '34', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Maroque', '4', '247', '7');
 INSERT INTO collaborateur_equipe VALUES ('248', 'Maroque', '4');
@@ -3471,7 +3510,7 @@ INSERT INTO joueur_equipe VALUES ('244', 'Maroque', '4', 'Millieu offensif', '28
 INSERT INTO joueur_equipe VALUES ('245', 'Maroque', '4', 'Gardien de but', '38', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('246', 'Maroque', '4', 'Attaquant de pointe', '47', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Egypt', '4', '257', '10');
 INSERT INTO collaborateur_equipe VALUES ('258', 'Egypt', '4');
@@ -3483,7 +3522,7 @@ INSERT INTO joueur_equipe VALUES ('254', 'Egypt', '4', 'Millieu offensif', '31',
 INSERT INTO joueur_equipe VALUES ('255', 'Egypt', '4', 'Gardien de but', '39', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('256', 'Egypt', '4', 'Attaquant de pointe', '33', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Grece', '4', '267', '28');
 INSERT INTO collaborateur_equipe VALUES ('268', 'Grece', '4');
@@ -3495,7 +3534,7 @@ INSERT INTO joueur_equipe VALUES ('264', 'Grece', '4', 'Millieu offensif', '22',
 INSERT INTO joueur_equipe VALUES ('265', 'Grece', '4', 'Gardien de but', '37', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('266', 'Grece', '4', 'Attaquant de pointe', '49', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Qatar', '4', '277', '15');
 INSERT INTO collaborateur_equipe VALUES ('278', 'Qatar', '4');
@@ -3507,7 +3546,7 @@ INSERT INTO joueur_equipe VALUES ('274', 'Qatar', '4', 'Millieu offensif', '22',
 INSERT INTO joueur_equipe VALUES ('275', 'Qatar', '4', 'Gardien de but', '28', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('276', 'Qatar', '4', 'Attaquant de pointe', '49', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Etats-Unis', '4', '287', '3');
 INSERT INTO collaborateur_equipe VALUES ('288', 'Etats-Unis', '4');
@@ -3519,7 +3558,7 @@ INSERT INTO joueur_equipe VALUES ('284', 'Etats-Unis', '4', 'Millieu offensif', 
 INSERT INTO joueur_equipe VALUES ('285', 'Etats-Unis', '4', 'Gardien de but', '31', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('286', 'Etats-Unis', '4', 'Attaquant de pointe', '49', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Turquie', '4', '297', '11');
 INSERT INTO collaborateur_equipe VALUES ('298', 'Turquie', '4');
@@ -3531,250 +3570,250 @@ INSERT INTO joueur_equipe VALUES ('294', 'Turquie', '4', 'Millieu offensif', '20
 INSERT INTO joueur_equipe VALUES ('295', 'Turquie', '4', 'Gardien de but', '32', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('296', 'Turquie', '4', 'Attaquant de pointe', '47', 'FC Bayern');
 
- -- Stade -- 
+-- Stade 
 INSERT INTO stade VALUES ('Fern field', 'Bobski', '44000', 'Canada', '1514');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Canada', 'Pologne', 'Match de 3e place', '0', '1', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Canada', 'Pologne', 'Principal', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('12', '70', 'Canada', 'Pologne', '2010-06-11', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('11', '70', 'Canada', 'Pologne', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('150', 'Canada', 'Pologne', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('180', 'Canada', 'Pologne', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('11', '180', 'Canada', 'Pologne', '2010-06-11', 'Jaune');
 INSERT INTO arbitre_match VALUES ('250', 'Canada', 'Pologne', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('12', '250', 'Canada', 'Pologne', '2010-06-11', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Bresil', 'Argentine', 'Ronde de groupe', '4', '3', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Bresil', 'Argentine', 'Principal', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('130', 'Bresil', 'Argentine', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('23', '130', 'Bresil', 'Argentine', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('190', 'Bresil', 'Argentine', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('230', 'Bresil', 'Argentine', 'Assistant', '2010-06-11');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Suisse', 'Belgique', 'Ronde de 16', '2', '0', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Suisse', 'Belgique', 'Principal', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('150', 'Suisse', 'Belgique', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('35', '150', 'Suisse', 'Belgique', '2010-06-11', 'Jaune');
 INSERT INTO arbitre_match VALUES ('180', 'Suisse', 'Belgique', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('31', '180', 'Suisse', 'Belgique', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('210', 'Suisse', 'Belgique', 'Assistant', '2010-06-11');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Suede', 'Croatie', 'Semi-finale', '5', '2', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Suede', 'Croatie', 'Principal', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('46', '80', 'Suede', 'Croatie', '2010-06-11', 'Jaune');
 INSERT INTO arbitre_match VALUES ('140', 'Suede', 'Croatie', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('46', '140', 'Suede', 'Croatie', '2010-06-11', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('45', '140', 'Suede', 'Croatie', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('200', 'Suede', 'Croatie', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('46', '200', 'Suede', 'Croatie', '2010-06-11', 'Jaune');
 INSERT INTO arbitre_match VALUES ('230', 'Suede', 'Croatie', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('43', '230', 'Suede', 'Croatie', '2010-06-11', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('42', '230', 'Suede', 'Croatie', '2010-06-11', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Chili', 'Pays-Bas', 'Ronde de 16', '2', '0', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Chili', 'Pays-Bas', 'Principal', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('56', '80', 'Chili', 'Pays-Bas', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('120', 'Chili', 'Pays-Bas', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('180', 'Chili', 'Pays-Bas', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('210', 'Chili', 'Pays-Bas', 'Assistant', '2010-06-11');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Angleterre', 'Coree du Sud', 'Ronde de 16', '5', '3', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Angleterre', 'Coree du Sud', 'Principal', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('66', '70', 'Angleterre', 'Coree du Sud', '2010-06-11', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('66', '70', 'Angleterre', 'Coree du Sud', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('150', 'Angleterre', 'Coree du Sud', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('190', 'Angleterre', 'Coree du Sud', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('63', '190', 'Angleterre', 'Coree du Sud', '2010-06-11', 'Jaune');
 INSERT INTO arbitre_match VALUES ('230', 'Angleterre', 'Coree du Sud', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('62', '230', 'Angleterre', 'Coree du Sud', '2010-06-11', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('64', '230', 'Angleterre', 'Coree du Sud', '2010-06-11', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Mexique', 'Japon', 'Ronde de groupe', '1', '0', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Mexique', 'Japon', 'Principal', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('75', '90', 'Mexique', 'Japon', '2010-06-11', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('75', '90', 'Mexique', 'Japon', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('150', 'Mexique', 'Japon', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('160', 'Mexique', 'Japon', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('220', 'Mexique', 'Japon', 'Assistant', '2010-06-11');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Allemagne', 'Russie', 'Ronde de 16', '0', '1', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Allemagne', 'Russie', 'Principal', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('82', '80', 'Allemagne', 'Russie', '2010-06-11', 'Jaune');
 INSERT INTO arbitre_match VALUES ('120', 'Allemagne', 'Russie', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('190', 'Allemagne', 'Russie', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('83', '190', 'Allemagne', 'Russie', '2010-06-11', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('84', '190', 'Allemagne', 'Russie', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('250', 'Allemagne', 'Russie', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('81', '250', 'Allemagne', 'Russie', '2010-06-11', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('84', '250', 'Allemagne', 'Russie', '2010-06-11', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Portugal', 'Maroque', 'Semi-finale', '0', '3', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Portugal', 'Maroque', 'Principal', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('130', 'Portugal', 'Maroque', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('94', '130', 'Portugal', 'Maroque', '2010-06-11', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('95', '130', 'Portugal', 'Maroque', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('180', 'Portugal', 'Maroque', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('240', 'Portugal', 'Maroque', 'Assistant', '2010-06-11');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2010-06-11', 'Autriche', 'Egypt', 'Finale', '5', '4', '4', 'Fern field', 'Bobski');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Autriche', 'Egypt', 'Principal', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('104', '70', 'Autriche', 'Egypt', '2010-06-11', 'Rouge');
 INSERT INTO arbitre_match VALUES ('150', 'Autriche', 'Egypt', 'Assistant', '2010-06-11');
 INSERT INTO arbitre_match VALUES ('170', 'Autriche', 'Egypt', 'Assistant', '2010-06-11');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('101', '170', 'Autriche', 'Egypt', '2010-06-11', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('104', '170', 'Autriche', 'Egypt', '2010-06-11', 'Jaune');
 INSERT INTO arbitre_match VALUES ('240', 'Autriche', 'Egypt', 'Assistant', '2010-06-11');
 
 
-  -- Coupe Du Monde  --- 
+-- Coupe Du Monde
 INSERT INTO coupe_du_monde VALUES ('5', '2014-06-12', '2014-07-13');
 INSERT INTO pays_coupe VALUES ('Bresil', '5');
 
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Uruguay', '5', '7', '4');
 INSERT INTO collaborateur_equipe VALUES ('8', 'Uruguay', '5');
@@ -3786,7 +3825,7 @@ INSERT INTO joueur_equipe VALUES ('4', 'Uruguay', '5', 'Millieu offensif', '31',
 INSERT INTO joueur_equipe VALUES ('5', 'Uruguay', '5', 'Gardien de but', '27', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('6', 'Uruguay', '5', 'Attaquant de pointe', '32', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Italie', '5', '17', '7');
 INSERT INTO collaborateur_equipe VALUES ('18', 'Italie', '5');
@@ -3798,7 +3837,7 @@ INSERT INTO joueur_equipe VALUES ('14', 'Italie', '5', 'Millieu offensif', '21',
 INSERT INTO joueur_equipe VALUES ('15', 'Italie', '5', 'Gardien de but', '32', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('16', 'Italie', '5', 'Attaquant de pointe', '44', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('France', '5', '27', '10');
 INSERT INTO collaborateur_equipe VALUES ('28', 'France', '5');
@@ -3810,7 +3849,7 @@ INSERT INTO joueur_equipe VALUES ('24', 'France', '5', 'Millieu offensif', '22',
 INSERT INTO joueur_equipe VALUES ('25', 'France', '5', 'Gardien de but', '25', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('26', 'France', '5', 'Attaquant de pointe', '46', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Canada', '5', '37', '12');
 INSERT INTO collaborateur_equipe VALUES ('38', 'Canada', '5');
@@ -3822,7 +3861,7 @@ INSERT INTO joueur_equipe VALUES ('34', 'Canada', '5', 'Millieu offensif', '29',
 INSERT INTO joueur_equipe VALUES ('35', 'Canada', '5', 'Gardien de but', '30', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('36', 'Canada', '5', 'Attaquant de pointe', '35', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Bresil', '5', '47', '14');
 INSERT INTO collaborateur_equipe VALUES ('48', 'Bresil', '5');
@@ -3834,7 +3873,7 @@ INSERT INTO joueur_equipe VALUES ('44', 'Bresil', '5', 'Millieu offensif', '30',
 INSERT INTO joueur_equipe VALUES ('45', 'Bresil', '5', 'Gardien de but', '41', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('46', 'Bresil', '5', 'Attaquant de pointe', '38', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suisse', '5', '57', '16');
 INSERT INTO collaborateur_equipe VALUES ('58', 'Suisse', '5');
@@ -3846,7 +3885,7 @@ INSERT INTO joueur_equipe VALUES ('54', 'Suisse', '5', 'Millieu offensif', '22',
 INSERT INTO joueur_equipe VALUES ('55', 'Suisse', '5', 'Gardien de but', '29', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('56', 'Suisse', '5', 'Attaquant de pointe', '40', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suede', '5', '67', '11');
 INSERT INTO collaborateur_equipe VALUES ('68', 'Suede', '5');
@@ -3858,7 +3897,7 @@ INSERT INTO joueur_equipe VALUES ('64', 'Suede', '5', 'Millieu offensif', '19', 
 INSERT INTO joueur_equipe VALUES ('65', 'Suede', '5', 'Gardien de but', '25', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('66', 'Suede', '5', 'Attaquant de pointe', '33', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Chili', '5', '77', '26');
 INSERT INTO collaborateur_equipe VALUES ('78', 'Chili', '5');
@@ -3870,7 +3909,7 @@ INSERT INTO joueur_equipe VALUES ('74', 'Chili', '5', 'Millieu offensif', '23', 
 INSERT INTO joueur_equipe VALUES ('75', 'Chili', '5', 'Gardien de but', '31', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('76', 'Chili', '5', 'Attaquant de pointe', '36', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Angleterre', '5', '87', '18');
 INSERT INTO collaborateur_equipe VALUES ('88', 'Angleterre', '5');
@@ -3882,7 +3921,7 @@ INSERT INTO joueur_equipe VALUES ('84', 'Angleterre', '5', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('85', 'Angleterre', '5', 'Gardien de but', '32', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('86', 'Angleterre', '5', 'Attaquant de pointe', '30', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Mexique', '5', '97', '29');
 INSERT INTO collaborateur_equipe VALUES ('98', 'Mexique', '5');
@@ -3894,7 +3933,7 @@ INSERT INTO joueur_equipe VALUES ('94', 'Mexique', '5', 'Millieu offensif', '24'
 INSERT INTO joueur_equipe VALUES ('95', 'Mexique', '5', 'Gardien de but', '36', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('96', 'Mexique', '5', 'Attaquant de pointe', '48', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Allemagne', '5', '107', '28');
 INSERT INTO collaborateur_equipe VALUES ('108', 'Allemagne', '5');
@@ -3906,7 +3945,7 @@ INSERT INTO joueur_equipe VALUES ('104', 'Allemagne', '5', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('105', 'Allemagne', '5', 'Gardien de but', '37', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('106', 'Allemagne', '5', 'Attaquant de pointe', '42', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Portugal', '5', '117', '6');
 INSERT INTO collaborateur_equipe VALUES ('118', 'Portugal', '5');
@@ -3918,7 +3957,7 @@ INSERT INTO joueur_equipe VALUES ('114', 'Portugal', '5', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('115', 'Portugal', '5', 'Gardien de but', '35', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('116', 'Portugal', '5', 'Attaquant de pointe', '32', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Autriche', '5', '127', '21');
 INSERT INTO collaborateur_equipe VALUES ('128', 'Autriche', '5');
@@ -3930,7 +3969,7 @@ INSERT INTO joueur_equipe VALUES ('124', 'Autriche', '5', 'Millieu offensif', '1
 INSERT INTO joueur_equipe VALUES ('125', 'Autriche', '5', 'Gardien de but', '25', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('126', 'Autriche', '5', 'Attaquant de pointe', '32', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Yougoslavie', '5', '137', '22');
 INSERT INTO collaborateur_equipe VALUES ('138', 'Yougoslavie', '5');
@@ -3942,7 +3981,7 @@ INSERT INTO joueur_equipe VALUES ('134', 'Yougoslavie', '5', 'Millieu offensif',
 INSERT INTO joueur_equipe VALUES ('135', 'Yougoslavie', '5', 'Gardien de but', '41', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('136', 'Yougoslavie', '5', 'Attaquant de pointe', '30', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Union sovietique', '5', '147', '23');
 INSERT INTO collaborateur_equipe VALUES ('148', 'Union sovietique', '5');
@@ -3954,7 +3993,7 @@ INSERT INTO joueur_equipe VALUES ('144', 'Union sovietique', '5', 'Millieu offen
 INSERT INTO joueur_equipe VALUES ('145', 'Union sovietique', '5', 'Gardien de but', '40', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('146', 'Union sovietique', '5', 'Attaquant de pointe', '44', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Tchecoslovaquie', '5', '157', '20');
 INSERT INTO collaborateur_equipe VALUES ('158', 'Tchecoslovaquie', '5');
@@ -3966,7 +4005,7 @@ INSERT INTO joueur_equipe VALUES ('154', 'Tchecoslovaquie', '5', 'Millieu offens
 INSERT INTO joueur_equipe VALUES ('155', 'Tchecoslovaquie', '5', 'Gardien de but', '24', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('156', 'Tchecoslovaquie', '5', 'Attaquant de pointe', '38', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pologne', '5', '167', '17');
 INSERT INTO collaborateur_equipe VALUES ('168', 'Pologne', '5');
@@ -3978,7 +4017,7 @@ INSERT INTO joueur_equipe VALUES ('164', 'Pologne', '5', 'Millieu offensif', '26
 INSERT INTO joueur_equipe VALUES ('165', 'Pologne', '5', 'Gardien de but', '28', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('166', 'Pologne', '5', 'Attaquant de pointe', '31', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Argentine', '5', '177', '25');
 INSERT INTO collaborateur_equipe VALUES ('178', 'Argentine', '5');
@@ -3990,7 +4029,7 @@ INSERT INTO joueur_equipe VALUES ('174', 'Argentine', '5', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('175', 'Argentine', '5', 'Gardien de but', '32', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('176', 'Argentine', '5', 'Attaquant de pointe', '48', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Belgique', '5', '187', '2');
 INSERT INTO collaborateur_equipe VALUES ('188', 'Belgique', '5');
@@ -4002,7 +4041,7 @@ INSERT INTO joueur_equipe VALUES ('184', 'Belgique', '5', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('185', 'Belgique', '5', 'Gardien de but', '37', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('186', 'Belgique', '5', 'Attaquant de pointe', '49', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Croatie', '5', '197', '1');
 INSERT INTO collaborateur_equipe VALUES ('198', 'Croatie', '5');
@@ -4014,7 +4053,7 @@ INSERT INTO joueur_equipe VALUES ('194', 'Croatie', '5', 'Millieu offensif', '26
 INSERT INTO joueur_equipe VALUES ('195', 'Croatie', '5', 'Gardien de but', '32', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('196', 'Croatie', '5', 'Attaquant de pointe', '51', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pays-Bas', '5', '207', '5');
 INSERT INTO collaborateur_equipe VALUES ('208', 'Pays-Bas', '5');
@@ -4026,7 +4065,7 @@ INSERT INTO joueur_equipe VALUES ('204', 'Pays-Bas', '5', 'Millieu offensif', '2
 INSERT INTO joueur_equipe VALUES ('205', 'Pays-Bas', '5', 'Gardien de but', '39', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('206', 'Pays-Bas', '5', 'Attaquant de pointe', '33', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Coree du Sud', '5', '217', '9');
 INSERT INTO collaborateur_equipe VALUES ('218', 'Coree du Sud', '5');
@@ -4038,7 +4077,7 @@ INSERT INTO joueur_equipe VALUES ('214', 'Coree du Sud', '5', 'Millieu offensif'
 INSERT INTO joueur_equipe VALUES ('215', 'Coree du Sud', '5', 'Gardien de but', '41', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('216', 'Coree du Sud', '5', 'Attaquant de pointe', '38', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Japon', '5', '227', '30');
 INSERT INTO collaborateur_equipe VALUES ('228', 'Japon', '5');
@@ -4050,7 +4089,7 @@ INSERT INTO joueur_equipe VALUES ('224', 'Japon', '5', 'Millieu offensif', '26',
 INSERT INTO joueur_equipe VALUES ('225', 'Japon', '5', 'Gardien de but', '34', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('226', 'Japon', '5', 'Attaquant de pointe', '36', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Russie', '5', '237', '24');
 INSERT INTO collaborateur_equipe VALUES ('238', 'Russie', '5');
@@ -4062,7 +4101,7 @@ INSERT INTO joueur_equipe VALUES ('234', 'Russie', '5', 'Millieu offensif', '22'
 INSERT INTO joueur_equipe VALUES ('235', 'Russie', '5', 'Gardien de but', '35', 'France National');
 INSERT INTO joueur_equipe VALUES ('236', 'Russie', '5', 'Attaquant de pointe', '42', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Maroque', '5', '247', '3');
 INSERT INTO collaborateur_equipe VALUES ('248', 'Maroque', '5');
@@ -4074,7 +4113,7 @@ INSERT INTO joueur_equipe VALUES ('244', 'Maroque', '5', 'Millieu offensif', '23
 INSERT INTO joueur_equipe VALUES ('245', 'Maroque', '5', 'Gardien de but', '26', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('246', 'Maroque', '5', 'Attaquant de pointe', '36', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Egypt', '5', '257', '13');
 INSERT INTO collaborateur_equipe VALUES ('258', 'Egypt', '5');
@@ -4086,7 +4125,7 @@ INSERT INTO joueur_equipe VALUES ('254', 'Egypt', '5', 'Millieu offensif', '24',
 INSERT INTO joueur_equipe VALUES ('255', 'Egypt', '5', 'Gardien de but', '30', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('256', 'Egypt', '5', 'Attaquant de pointe', '38', 'Olympique Lyonnais');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Grece', '5', '267', '27');
 INSERT INTO collaborateur_equipe VALUES ('268', 'Grece', '5');
@@ -4098,7 +4137,7 @@ INSERT INTO joueur_equipe VALUES ('264', 'Grece', '5', 'Millieu offensif', '28',
 INSERT INTO joueur_equipe VALUES ('265', 'Grece', '5', 'Gardien de but', '26', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('266', 'Grece', '5', 'Attaquant de pointe', '30', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Qatar', '5', '277', '15');
 INSERT INTO collaborateur_equipe VALUES ('278', 'Qatar', '5');
@@ -4110,7 +4149,7 @@ INSERT INTO joueur_equipe VALUES ('274', 'Qatar', '5', 'Millieu offensif', '24',
 INSERT INTO joueur_equipe VALUES ('275', 'Qatar', '5', 'Gardien de but', '39', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('276', 'Qatar', '5', 'Attaquant de pointe', '35', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Etats-Unis', '5', '287', '8');
 INSERT INTO collaborateur_equipe VALUES ('288', 'Etats-Unis', '5');
@@ -4122,7 +4161,7 @@ INSERT INTO joueur_equipe VALUES ('284', 'Etats-Unis', '5', 'Millieu offensif', 
 INSERT INTO joueur_equipe VALUES ('285', 'Etats-Unis', '5', 'Gardien de but', '25', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('286', 'Etats-Unis', '5', 'Attaquant de pointe', '43', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Turquie', '5', '297', '19');
 INSERT INTO collaborateur_equipe VALUES ('298', 'Turquie', '5');
@@ -4134,250 +4173,250 @@ INSERT INTO joueur_equipe VALUES ('294', 'Turquie', '5', 'Millieu offensif', '26
 INSERT INTO joueur_equipe VALUES ('295', 'Turquie', '5', 'Gardien de but', '26', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('296', 'Turquie', '5', 'Attaquant de pointe', '34', 'Spain N.F.C.');
 
- -- Stade -- 
+-- Stade 
 INSERT INTO stade VALUES ('Grandios Stadium', 'Hadderfoo', '30000', 'Bresil', '1879');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Bresil', 'Belgique', 'Ronde de groupe', '5', '0', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Bresil', 'Belgique', 'Principal', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('12', '100', 'Bresil', 'Belgique', '2014-06-12', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('15', '100', 'Bresil', 'Belgique', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('150', 'Bresil', 'Belgique', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('12', '150', 'Bresil', 'Belgique', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('170', 'Bresil', 'Belgique', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('220', 'Bresil', 'Belgique', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('16', '220', 'Bresil', 'Belgique', '2014-06-12', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('13', '220', 'Bresil', 'Belgique', '2014-06-12', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Suisse', 'Croatie', 'Ronde de 16', '2', '3', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Suisse', 'Croatie', 'Principal', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('21', '60', 'Suisse', 'Croatie', '2014-06-12', 'Rouge');
 INSERT INTO arbitre_match VALUES ('140', 'Suisse', 'Croatie', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('26', '140', 'Suisse', 'Croatie', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('180', 'Suisse', 'Croatie', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('25', '180', 'Suisse', 'Croatie', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('220', 'Suisse', 'Croatie', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('24', '220', 'Suisse', 'Croatie', '2014-06-12', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('24', '220', 'Suisse', 'Croatie', '2014-06-12', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Suede', 'Pays-Bas', 'Quart de finale', '5', '2', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Suede', 'Pays-Bas', 'Principal', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('31', '70', 'Suede', 'Pays-Bas', '2014-06-12', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('34', '70', 'Suede', 'Pays-Bas', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('140', 'Suede', 'Pays-Bas', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('33', '140', 'Suede', 'Pays-Bas', '2014-06-12', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('31', '140', 'Suede', 'Pays-Bas', '2014-06-12', 'Rouge');
 INSERT INTO arbitre_match VALUES ('170', 'Suede', 'Pays-Bas', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('210', 'Suede', 'Pays-Bas', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('34', '210', 'Suede', 'Pays-Bas', '2014-06-12', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Chili', 'Coree du Sud', 'Finale', '3', '4', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Chili', 'Coree du Sud', 'Principal', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('43', '80', 'Chili', 'Coree du Sud', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('110', 'Chili', 'Coree du Sud', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('160', 'Chili', 'Coree du Sud', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('210', 'Chili', 'Coree du Sud', 'Assistant', '2014-06-12');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Angleterre', 'Japon', 'Quart de finale', '1', '5', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Angleterre', 'Japon', 'Principal', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('110', 'Angleterre', 'Japon', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('54', '110', 'Angleterre', 'Japon', '2014-06-12', 'Rouge');
 INSERT INTO arbitre_match VALUES ('190', 'Angleterre', 'Japon', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('250', 'Angleterre', 'Japon', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('54', '250', 'Angleterre', 'Japon', '2014-06-12', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('54', '250', 'Angleterre', 'Japon', '2014-06-12', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Mexique', 'Russie', 'Quart de finale', '4', '3', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Mexique', 'Russie', 'Principal', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('62', '60', 'Mexique', 'Russie', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('140', 'Mexique', 'Russie', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('160', 'Mexique', 'Russie', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('220', 'Mexique', 'Russie', 'Assistant', '2014-06-12');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Allemagne', 'Maroque', 'Ronde de groupe', '1', '2', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Allemagne', 'Maroque', 'Principal', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('71', '90', 'Allemagne', 'Maroque', '2014-06-12', 'Rouge');
 INSERT INTO arbitre_match VALUES ('140', 'Allemagne', 'Maroque', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('72', '140', 'Allemagne', 'Maroque', '2014-06-12', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('73', '140', 'Allemagne', 'Maroque', '2014-06-12', 'Rouge');
 INSERT INTO arbitre_match VALUES ('160', 'Allemagne', 'Maroque', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('75', '160', 'Allemagne', 'Maroque', '2014-06-12', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('73', '160', 'Allemagne', 'Maroque', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('230', 'Allemagne', 'Maroque', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('72', '230', 'Allemagne', 'Maroque', '2014-06-12', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Portugal', 'Egypt', 'Semi-finale', '1', '4', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Portugal', 'Egypt', 'Principal', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('84', '80', 'Portugal', 'Egypt', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('150', 'Portugal', 'Egypt', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('190', 'Portugal', 'Egypt', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('220', 'Portugal', 'Egypt', 'Assistant', '2014-06-12');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Autriche', 'Grece', 'Semi-finale', '3', '0', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Autriche', 'Grece', 'Principal', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('140', 'Autriche', 'Grece', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('93', '140', 'Autriche', 'Grece', '2014-06-12', 'Rouge');
 INSERT INTO arbitre_match VALUES ('160', 'Autriche', 'Grece', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('92', '160', 'Autriche', 'Grece', '2014-06-12', 'Jaune');
 INSERT INTO arbitre_match VALUES ('230', 'Autriche', 'Grece', 'Assistant', '2014-06-12');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2014-06-12', 'Yougoslavie', 'Qatar', 'Ronde de 16', '2', '3', '5', 'Grandios Stadium', 'Hadderfoo');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Yougoslavie', 'Qatar', 'Principal', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('120', 'Yougoslavie', 'Qatar', 'Assistant', '2014-06-12');
 INSERT INTO arbitre_match VALUES ('160', 'Yougoslavie', 'Qatar', 'Assistant', '2014-06-12');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('104', '160', 'Yougoslavie', 'Qatar', '2014-06-12', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('106', '160', 'Yougoslavie', 'Qatar', '2014-06-12', 'Rouge');
 INSERT INTO arbitre_match VALUES ('230', 'Yougoslavie', 'Qatar', 'Assistant', '2014-06-12');
 
 
-  -- Coupe Du Monde  --- 
+-- Coupe Du Monde
 INSERT INTO coupe_du_monde VALUES ('6', '2018-06-14', '2018-07-15');
 INSERT INTO pays_coupe VALUES ('Suisse', '6');
 
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Uruguay', '6', '7', '29');
 INSERT INTO collaborateur_equipe VALUES ('8', 'Uruguay', '6');
@@ -4389,7 +4428,7 @@ INSERT INTO joueur_equipe VALUES ('4', 'Uruguay', '6', 'Millieu offensif', '29',
 INSERT INTO joueur_equipe VALUES ('5', 'Uruguay', '6', 'Gardien de but', '29', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('6', 'Uruguay', '6', 'Attaquant de pointe', '33', 'F.C. Barcelona');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Italie', '6', '17', '30');
 INSERT INTO collaborateur_equipe VALUES ('18', 'Italie', '6');
@@ -4401,7 +4440,7 @@ INSERT INTO joueur_equipe VALUES ('14', 'Italie', '6', 'Millieu offensif', '21',
 INSERT INTO joueur_equipe VALUES ('15', 'Italie', '6', 'Gardien de but', '40', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('16', 'Italie', '6', 'Attaquant de pointe', '31', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('France', '6', '27', '25');
 INSERT INTO collaborateur_equipe VALUES ('28', 'France', '6');
@@ -4413,7 +4452,7 @@ INSERT INTO joueur_equipe VALUES ('24', 'France', '6', 'Millieu offensif', '27',
 INSERT INTO joueur_equipe VALUES ('25', 'France', '6', 'Gardien de but', '28', 'France National');
 INSERT INTO joueur_equipe VALUES ('26', 'France', '6', 'Attaquant de pointe', '39', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Canada', '6', '37', '6');
 INSERT INTO collaborateur_equipe VALUES ('38', 'Canada', '6');
@@ -4425,7 +4464,7 @@ INSERT INTO joueur_equipe VALUES ('34', 'Canada', '6', 'Millieu offensif', '29',
 INSERT INTO joueur_equipe VALUES ('35', 'Canada', '6', 'Gardien de but', '32', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('36', 'Canada', '6', 'Attaquant de pointe', '36', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Bresil', '6', '47', '13');
 INSERT INTO collaborateur_equipe VALUES ('48', 'Bresil', '6');
@@ -4437,7 +4476,7 @@ INSERT INTO joueur_equipe VALUES ('44', 'Bresil', '6', 'Millieu offensif', '24',
 INSERT INTO joueur_equipe VALUES ('45', 'Bresil', '6', 'Gardien de but', '31', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('46', 'Bresil', '6', 'Attaquant de pointe', '50', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suisse', '6', '57', '2');
 INSERT INTO collaborateur_equipe VALUES ('58', 'Suisse', '6');
@@ -4449,7 +4488,7 @@ INSERT INTO joueur_equipe VALUES ('54', 'Suisse', '6', 'Millieu offensif', '29',
 INSERT INTO joueur_equipe VALUES ('55', 'Suisse', '6', 'Gardien de but', '35', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('56', 'Suisse', '6', 'Attaquant de pointe', '50', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Suede', '6', '67', '19');
 INSERT INTO collaborateur_equipe VALUES ('68', 'Suede', '6');
@@ -4461,7 +4500,7 @@ INSERT INTO joueur_equipe VALUES ('64', 'Suede', '6', 'Millieu offensif', '26', 
 INSERT INTO joueur_equipe VALUES ('65', 'Suede', '6', 'Gardien de but', '32', 'Olympique Lyonnais');
 INSERT INTO joueur_equipe VALUES ('66', 'Suede', '6', 'Attaquant de pointe', '40', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Chili', '6', '77', '3');
 INSERT INTO collaborateur_equipe VALUES ('78', 'Chili', '6');
@@ -4473,7 +4512,7 @@ INSERT INTO joueur_equipe VALUES ('74', 'Chili', '6', 'Millieu offensif', '25', 
 INSERT INTO joueur_equipe VALUES ('75', 'Chili', '6', 'Gardien de but', '26', 'France National');
 INSERT INTO joueur_equipe VALUES ('76', 'Chili', '6', 'Attaquant de pointe', '34', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Angleterre', '6', '87', '10');
 INSERT INTO collaborateur_equipe VALUES ('88', 'Angleterre', '6');
@@ -4485,7 +4524,7 @@ INSERT INTO joueur_equipe VALUES ('84', 'Angleterre', '6', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('85', 'Angleterre', '6', 'Gardien de but', '24', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('86', 'Angleterre', '6', 'Attaquant de pointe', '44', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Mexique', '6', '97', '28');
 INSERT INTO collaborateur_equipe VALUES ('98', 'Mexique', '6');
@@ -4497,7 +4536,7 @@ INSERT INTO joueur_equipe VALUES ('94', 'Mexique', '6', 'Millieu offensif', '19'
 INSERT INTO joueur_equipe VALUES ('95', 'Mexique', '6', 'Gardien de but', '31', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('96', 'Mexique', '6', 'Attaquant de pointe', '43', 'AS Monaco');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Allemagne', '6', '107', '14');
 INSERT INTO collaborateur_equipe VALUES ('108', 'Allemagne', '6');
@@ -4509,7 +4548,7 @@ INSERT INTO joueur_equipe VALUES ('104', 'Allemagne', '6', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('105', 'Allemagne', '6', 'Gardien de but', '34', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('106', 'Allemagne', '6', 'Attaquant de pointe', '41', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Portugal', '6', '117', '8');
 INSERT INTO collaborateur_equipe VALUES ('118', 'Portugal', '6');
@@ -4521,7 +4560,7 @@ INSERT INTO joueur_equipe VALUES ('114', 'Portugal', '6', 'Millieu offensif', '3
 INSERT INTO joueur_equipe VALUES ('115', 'Portugal', '6', 'Gardien de but', '30', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('116', 'Portugal', '6', 'Attaquant de pointe', '48', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Autriche', '6', '127', '21');
 INSERT INTO collaborateur_equipe VALUES ('128', 'Autriche', '6');
@@ -4533,7 +4572,7 @@ INSERT INTO joueur_equipe VALUES ('124', 'Autriche', '6', 'Millieu offensif', '1
 INSERT INTO joueur_equipe VALUES ('125', 'Autriche', '6', 'Gardien de but', '39', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('126', 'Autriche', '6', 'Attaquant de pointe', '38', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Yougoslavie', '6', '137', '22');
 INSERT INTO collaborateur_equipe VALUES ('138', 'Yougoslavie', '6');
@@ -4545,7 +4584,7 @@ INSERT INTO joueur_equipe VALUES ('134', 'Yougoslavie', '6', 'Millieu offensif',
 INSERT INTO joueur_equipe VALUES ('135', 'Yougoslavie', '6', 'Gardien de but', '38', 'FC Bayern');
 INSERT INTO joueur_equipe VALUES ('136', 'Yougoslavie', '6', 'Attaquant de pointe', '41', 'Spain N.F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Union sovietique', '6', '147', '7');
 INSERT INTO collaborateur_equipe VALUES ('148', 'Union sovietique', '6');
@@ -4557,7 +4596,7 @@ INSERT INTO joueur_equipe VALUES ('144', 'Union sovietique', '6', 'Millieu offen
 INSERT INTO joueur_equipe VALUES ('145', 'Union sovietique', '6', 'Gardien de but', '34', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('146', 'Union sovietique', '6', 'Attaquant de pointe', '44', 'Real Madrid');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Tchecoslovaquie', '6', '157', '17');
 INSERT INTO collaborateur_equipe VALUES ('158', 'Tchecoslovaquie', '6');
@@ -4569,7 +4608,7 @@ INSERT INTO joueur_equipe VALUES ('154', 'Tchecoslovaquie', '6', 'Millieu offens
 INSERT INTO joueur_equipe VALUES ('155', 'Tchecoslovaquie', '6', 'Gardien de but', '38', 'France National');
 INSERT INTO joueur_equipe VALUES ('156', 'Tchecoslovaquie', '6', 'Attaquant de pointe', '35', 'FC Bayern');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pologne', '6', '167', '16');
 INSERT INTO collaborateur_equipe VALUES ('168', 'Pologne', '6');
@@ -4581,7 +4620,7 @@ INSERT INTO joueur_equipe VALUES ('164', 'Pologne', '6', 'Millieu offensif', '22
 INSERT INTO joueur_equipe VALUES ('165', 'Pologne', '6', 'Gardien de but', '32', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('166', 'Pologne', '6', 'Attaquant de pointe', '47', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Argentine', '6', '177', '11');
 INSERT INTO collaborateur_equipe VALUES ('178', 'Argentine', '6');
@@ -4593,7 +4632,7 @@ INSERT INTO joueur_equipe VALUES ('174', 'Argentine', '6', 'Millieu offensif', '
 INSERT INTO joueur_equipe VALUES ('175', 'Argentine', '6', 'Gardien de but', '28', 'Brazil nationnal');
 INSERT INTO joueur_equipe VALUES ('176', 'Argentine', '6', 'Attaquant de pointe', '38', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Belgique', '6', '187', '12');
 INSERT INTO collaborateur_equipe VALUES ('188', 'Belgique', '6');
@@ -4605,7 +4644,7 @@ INSERT INTO joueur_equipe VALUES ('184', 'Belgique', '6', 'Millieu offensif', '1
 INSERT INTO joueur_equipe VALUES ('185', 'Belgique', '6', 'Gardien de but', '28', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('186', 'Belgique', '6', 'Attaquant de pointe', '32', 'Brazil nationnal');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Croatie', '6', '197', '23');
 INSERT INTO collaborateur_equipe VALUES ('198', 'Croatie', '6');
@@ -4617,7 +4656,7 @@ INSERT INTO joueur_equipe VALUES ('194', 'Croatie', '6', 'Millieu offensif', '21
 INSERT INTO joueur_equipe VALUES ('195', 'Croatie', '6', 'Gardien de but', '25', 'France National');
 INSERT INTO joueur_equipe VALUES ('196', 'Croatie', '6', 'Attaquant de pointe', '48', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Pays-Bas', '6', '207', '4');
 INSERT INTO collaborateur_equipe VALUES ('208', 'Pays-Bas', '6');
@@ -4629,7 +4668,7 @@ INSERT INTO joueur_equipe VALUES ('204', 'Pays-Bas', '6', 'Millieu offensif', '1
 INSERT INTO joueur_equipe VALUES ('205', 'Pays-Bas', '6', 'Gardien de but', '37', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('206', 'Pays-Bas', '6', 'Attaquant de pointe', '40', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Coree du Sud', '6', '217', '1');
 INSERT INTO collaborateur_equipe VALUES ('218', 'Coree du Sud', '6');
@@ -4641,7 +4680,7 @@ INSERT INTO joueur_equipe VALUES ('214', 'Coree du Sud', '6', 'Millieu offensif'
 INSERT INTO joueur_equipe VALUES ('215', 'Coree du Sud', '6', 'Gardien de but', '40', 'Real Madrid');
 INSERT INTO joueur_equipe VALUES ('216', 'Coree du Sud', '6', 'Attaquant de pointe', '46', 'Arsenal F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Japon', '6', '227', '15');
 INSERT INTO collaborateur_equipe VALUES ('228', 'Japon', '6');
@@ -4653,7 +4692,7 @@ INSERT INTO joueur_equipe VALUES ('224', 'Japon', '6', 'Millieu offensif', '19',
 INSERT INTO joueur_equipe VALUES ('225', 'Japon', '6', 'Gardien de but', '36', 'F.C. Barcelona');
 INSERT INTO joueur_equipe VALUES ('226', 'Japon', '6', 'Attaquant de pointe', '49', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Russie', '6', '237', '5');
 INSERT INTO collaborateur_equipe VALUES ('238', 'Russie', '6');
@@ -4665,7 +4704,7 @@ INSERT INTO joueur_equipe VALUES ('234', 'Russie', '6', 'Millieu offensif', '24'
 INSERT INTO joueur_equipe VALUES ('235', 'Russie', '6', 'Gardien de but', '26', 'Chelsea F.C.');
 INSERT INTO joueur_equipe VALUES ('236', 'Russie', '6', 'Attaquant de pointe', '38', 'Liverpool F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Maroque', '6', '247', '26');
 INSERT INTO collaborateur_equipe VALUES ('248', 'Maroque', '6');
@@ -4677,7 +4716,7 @@ INSERT INTO joueur_equipe VALUES ('244', 'Maroque', '6', 'Millieu offensif', '31
 INSERT INTO joueur_equipe VALUES ('245', 'Maroque', '6', 'Gardien de but', '41', 'Manchester United F.C.');
 INSERT INTO joueur_equipe VALUES ('246', 'Maroque', '6', 'Attaquant de pointe', '38', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Egypt', '6', '257', '27');
 INSERT INTO collaborateur_equipe VALUES ('258', 'Egypt', '6');
@@ -4689,7 +4728,7 @@ INSERT INTO joueur_equipe VALUES ('254', 'Egypt', '6', 'Millieu offensif', '30',
 INSERT INTO joueur_equipe VALUES ('255', 'Egypt', '6', 'Gardien de but', '33', 'AS Monaco');
 INSERT INTO joueur_equipe VALUES ('256', 'Egypt', '6', 'Attaquant de pointe', '42', 'Chelsea F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Grece', '6', '267', '18');
 INSERT INTO collaborateur_equipe VALUES ('268', 'Grece', '6');
@@ -4701,7 +4740,7 @@ INSERT INTO joueur_equipe VALUES ('264', 'Grece', '6', 'Millieu offensif', '28',
 INSERT INTO joueur_equipe VALUES ('265', 'Grece', '6', 'Gardien de but', '38', 'Spain N.F.C.');
 INSERT INTO joueur_equipe VALUES ('266', 'Grece', '6', 'Attaquant de pointe', '41', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Qatar', '6', '277', '24');
 INSERT INTO collaborateur_equipe VALUES ('278', 'Qatar', '6');
@@ -4713,7 +4752,7 @@ INSERT INTO joueur_equipe VALUES ('274', 'Qatar', '6', 'Millieu offensif', '21',
 INSERT INTO joueur_equipe VALUES ('275', 'Qatar', '6', 'Gardien de but', '35', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('276', 'Qatar', '6', 'Attaquant de pointe', '49', 'France National');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Etats-Unis', '6', '287', '9');
 INSERT INTO collaborateur_equipe VALUES ('288', 'Etats-Unis', '6');
@@ -4725,7 +4764,7 @@ INSERT INTO joueur_equipe VALUES ('284', 'Etats-Unis', '6', 'Millieu offensif', 
 INSERT INTO joueur_equipe VALUES ('285', 'Etats-Unis', '6', 'Gardien de but', '36', 'Liverpool F.C.');
 INSERT INTO joueur_equipe VALUES ('286', 'Etats-Unis', '6', 'Attaquant de pointe', '31', 'Manchester United F.C.');
 
- -- EQUIPE  + Association-- 
+-- Équipe  + Association
 
 INSERT INTO equipe_foot VALUES ('Turquie', '6', '297', '20');
 INSERT INTO collaborateur_equipe VALUES ('298', 'Turquie', '6');
@@ -4737,286 +4776,283 @@ INSERT INTO joueur_equipe VALUES ('294', 'Turquie', '6', 'Millieu offensif', '28
 INSERT INTO joueur_equipe VALUES ('295', 'Turquie', '6', 'Gardien de but', '39', 'Arsenal F.C.');
 INSERT INTO joueur_equipe VALUES ('296', 'Turquie', '6', 'Attaquant de pointe', '48', 'Arsenal F.C.');
 
- -- Stade -- 
+-- Stade 
 INSERT INTO stade VALUES ('Cookie Center', 'Sier', '44000', 'Suisse', '1651');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Suisse', 'Pays-Bas', 'Semi-finale', '0', '1', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Suisse', 'Pays-Bas', 'Principal', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('150', 'Suisse', 'Pays-Bas', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('200', 'Suisse', 'Pays-Bas', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('210', 'Suisse', 'Pays-Bas', 'Assistant', '2018-06-14');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Suede', 'Coree du Sud', 'Semi-finale', '0', '1', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Suede', 'Coree du Sud', 'Principal', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('23', '100', 'Suede', 'Coree du Sud', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('25', '100', 'Suede', 'Coree du Sud', '2018-06-14', 'Rouge');
 INSERT INTO arbitre_match VALUES ('110', 'Suede', 'Coree du Sud', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('180', 'Suede', 'Coree du Sud', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('250', 'Suede', 'Coree du Sud', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('24', '250', 'Suede', 'Coree du Sud', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('25', '250', 'Suede', 'Coree du Sud', '2018-06-14', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Chili', 'Japon', 'Ronde de groupe', '5', '1', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Chili', 'Japon', 'Principal', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('34', '90', 'Chili', 'Japon', '2018-06-14', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('31', '90', 'Chili', 'Japon', '2018-06-14', 'Rouge');
 INSERT INTO arbitre_match VALUES ('110', 'Chili', 'Japon', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('35', '110', 'Chili', 'Japon', '2018-06-14', 'Rouge');
 INSERT INTO arbitre_match VALUES ('180', 'Chili', 'Japon', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('36', '180', 'Chili', 'Japon', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('35', '180', 'Chili', 'Japon', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('250', 'Chili', 'Japon', 'Assistant', '2018-06-14');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Angleterre', 'Russie', 'Finale', '2', '0', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Angleterre', 'Russie', 'Principal', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('130', 'Angleterre', 'Russie', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('180', 'Angleterre', 'Russie', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('220', 'Angleterre', 'Russie', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('46', '220', 'Angleterre', 'Russie', '2018-06-14', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Mexique', 'Maroque', 'Ronde de groupe', '2', '3', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('80', 'Mexique', 'Maroque', 'Principal', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('130', 'Mexique', 'Maroque', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('190', 'Mexique', 'Maroque', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('230', 'Mexique', 'Maroque', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('51', '230', 'Mexique', 'Maroque', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('52', '230', 'Mexique', 'Maroque', '2018-06-14', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Allemagne', 'Egypt', 'Quart de finale', '0', '3', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Allemagne', 'Egypt', 'Principal', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('120', 'Allemagne', 'Egypt', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('64', '120', 'Allemagne', 'Egypt', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('66', '120', 'Allemagne', 'Egypt', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('200', 'Allemagne', 'Egypt', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('63', '200', 'Allemagne', 'Egypt', '2018-06-14', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('64', '200', 'Allemagne', 'Egypt', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('230', 'Allemagne', 'Egypt', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('62', '230', 'Allemagne', 'Egypt', '2018-06-14', 'Rouge');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Portugal', 'Grece', 'Semi-finale', '3', '2', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('60', 'Portugal', 'Grece', 'Principal', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('76', '60', 'Portugal', 'Grece', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('110', 'Portugal', 'Grece', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('72', '110', 'Portugal', 'Grece', '2018-06-14', 'Rouge');
 INSERT INTO arbitre_match VALUES ('180', 'Portugal', 'Grece', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('71', '180', 'Portugal', 'Grece', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('72', '180', 'Portugal', 'Grece', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('210', 'Portugal', 'Grece', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('72', '210', 'Portugal', 'Grece', '2018-06-14', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Autriche', 'Qatar', 'Finale', '2', '4', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('100', 'Autriche', 'Qatar', 'Principal', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('86', '100', 'Autriche', 'Qatar', '2018-06-14', 'Rouge');
 INSERT INTO arbitre_match VALUES ('130', 'Autriche', 'Qatar', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('85', '130', 'Autriche', 'Qatar', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('81', '130', 'Autriche', 'Qatar', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('180', 'Autriche', 'Qatar', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('84', '180', 'Autriche', 'Qatar', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('82', '180', 'Autriche', 'Qatar', '2018-06-14', 'Rouge');
 INSERT INTO arbitre_match VALUES ('210', 'Autriche', 'Qatar', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('85', '210', 'Autriche', 'Qatar', '2018-06-14', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('83', '210', 'Autriche', 'Qatar', '2018-06-14', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Yougoslavie', 'Etats-Unis', 'Match de 3e place', '5', '4', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('70', 'Yougoslavie', 'Etats-Unis', 'Principal', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('94', '70', 'Yougoslavie', 'Etats-Unis', '2018-06-14', 'Jaune');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('94', '70', 'Yougoslavie', 'Etats-Unis', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('110', 'Yougoslavie', 'Etats-Unis', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('93', '110', 'Yougoslavie', 'Etats-Unis', '2018-06-14', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('95', '110', 'Yougoslavie', 'Etats-Unis', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('200', 'Yougoslavie', 'Etats-Unis', 'Assistant', '2018-06-14');
 INSERT INTO arbitre_match VALUES ('210', 'Yougoslavie', 'Etats-Unis', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('96', '210', 'Yougoslavie', 'Etats-Unis', '2018-06-14', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('93', '210', 'Yougoslavie', 'Etats-Unis', '2018-06-14', 'Jaune');
 
- -- Match -- 
+-- Match 
 
 INSERT INTO match_foot VALUES ('2018-06-14', 'Union sovietique', 'Turquie', 'Ronde de 16', '6', '5', '6', 'Cookie Center', 'Sier');
 
- -- Arbitre du Match -- 
+-- Arbitre du Match
 
 INSERT INTO arbitre_match VALUES ('90', 'Union sovietique', 'Turquie', 'Principal', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('105', '90', 'Union sovietique', 'Turquie', '2018-06-14', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('101', '90', 'Union sovietique', 'Turquie', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('140', 'Union sovietique', 'Turquie', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('103', '140', 'Union sovietique', 'Turquie', '2018-06-14', 'Rouge');
 INSERT INTO arbitre_match VALUES ('180', 'Union sovietique', 'Turquie', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('105', '180', 'Union sovietique', 'Turquie', '2018-06-14', 'Jaune');
 INSERT INTO arbitre_match VALUES ('250', 'Union sovietique', 'Turquie', 'Assistant', '2018-06-14');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('106', '250', 'Union sovietique', 'Turquie', '2018-06-14', 'Rouge');
 
- -- Sanction du match -- 
+-- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('102', '250', 'Union sovietique', 'Turquie', '2018-06-14', 'Rouge');
-commit;
 
-
-begin;
 UPDATE personne 
 SET pays_natal = 'Canada'
 WHERE personne_id = 7;
@@ -5049,62 +5085,11 @@ UPDATE equipe_foot
 set placement = 7
 where nation = 'Russie' AND placement = 1;
 
-
 UPDATE equipe_foot 
 set placement = 7
 where nation = 'Japon' AND placement = 1;
 
-commit;
-
-begin;
-
--- CHECK IF THEY DIDNT REPLICATE MATCH BY JUST SWITCHING NATION1, NATION2
-
-CREATE OR REPLACE FUNCTION nation_order_trigger()
-    RETURNS TRIGGER AS
-    $$
-    declare
-    new_team_order record;
-    BEGIN
-    SELECT date, nation1, nation2 INTO new_team_order 
-    FROM match_foot WHERE (date = NEW.date AND nation2 = NEW.nation1 AND nation1 = NEW.nation2);
-
-    IF new_team_order IS NOT NULL THEN
-    RAISE exception 'Erreur: Ce match existe deja dans la coupe';
-    END IF;
-
-    RETURN NEW;
-
-    END;
-    $$ language plpgsql;
-
-
-CREATE TRIGGER match_order_insert BEFORE INSERT ON match_foot
-FOR EACH ROW
-EXECUTE PROCEDURE nation_order_trigger();
-
-
-
-
--- Function to lookup all player information from a team
-
-CREATE OR REPLACE FUNCTION team_players(ed_arg int, nation_arg text)
-    RETURNS TABLE (Prenom varchar(255), Nom varchar(255), Dossard INT, Position_ varchar(255),
-    Equipe_Professionnelle text, Joueur_depuis text, Date_de_Naissance text)  
-    
-    AS
-    $$
-        select p.prenom, p.nom, eq.numero_dossard, eq.position,
-        eq.equipe_ligue_professionnelle, j.joueur_depuis, p.ddn
-        FROM joueur_equipe AS eq JOIN joueur AS j ON joueur_id = personne_id NATURAL JOIN personne p
-        WHERE eq.nation = nation_arg AND eq.edition_coupe = ed_arg;
-    $$ LANGUAGE SQL;
-
-
-    commit;
-
-
-    begin;
+-- Création de vues pour les 4 questions
 
     CREATE OR REPLACE VIEW requete1 AS
 WITH 
@@ -5135,7 +5120,6 @@ FROM Equipe_Foot WHERE placement = 1
 GROUP BY nation
 ORDER BY nbCoupesGagnees DESC, nation;
 
-
 CREATE OR REPLACE VIEW requete3 AS
 WITH 
 	entraineur1 AS (SELECT personne_id FROM Entraineur),
@@ -5149,10 +5133,6 @@ WHERE NOT nation = pays_natal
 GROUP BY nom, prenom
 ORDER BY nom, prenom;
 
-
-
-
-
 CREATE OR REPLACE VIEW requete4 AS
 WITH sanctions AS (SELECT sanction_id, arbitre_id, 
 	nation_equipe_1, nation_equipe_2, match_date 
@@ -5164,5 +5144,15 @@ ON match_date = date_match
 	AND nation_equipe_2 = nation2 
 	AND sanctions.arbitre_id = Arbitre_match.arbitre_id
 GROUP BY type_arbitre; 
+
+-- Affichage des 4 questions
+
+SELECT * FROM requete1;
+
+SELECT * FROM requete2;
+
+SELECT * FROM requete3;
+
+SELECT * FROM requete4;
 
 commit;
