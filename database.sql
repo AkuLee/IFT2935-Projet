@@ -3,7 +3,7 @@ CREATE DATABASE projet_foot;
 
 begin;
 
--- Déclaration des tables et des contraintes
+-- Création des tables et des contraintes
 
 CREATE TABLE Coupe_Du_Monde (
     edition int4 UNIQUE NOT NULL,
@@ -5052,6 +5052,8 @@ INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, m
 -- Sanction du match
 
 INSERT INTO sanction (joueur_id, arbitre_id, nation_equipe_1, nation_equipe_2, match_date, couleur) VALUES ('102', '250', 'Union sovietique', 'Turquie', '2018-06-14', 'Rouge');
+
+-- Ajustements pour les 4 questions
 
 UPDATE personne 
 SET pays_natal = 'Canada'
